@@ -1,2 +1,4 @@
+^\.travis\.yml$
+^README\.Rmd$
 ^efor\.Rproj$
 ^\.Rproj\.user$
