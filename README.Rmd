@@ -15,16 +15,16 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 ```
-# tidypreprocess
+# efor
 
-The goal of tidypreprocess is to make it easier if you have to apply preprocessing to multiple timesereis
+The goal of efor is to make it easier if you have to apply preprocessing to multiple timesereis
 
 ## Installation
 
-You can install the released version of tidypreprocess from github with:
+You can install the released version of efor from github with:
 
 ``` r
-devtools::install_github("flostracke/tidypreprocess")
+devtools::install_github("flostracke/efor")
 ```
 
 ## Example
@@ -34,7 +34,7 @@ First we load some packages for this example.
 
 library(salesdata) # devtools::install_github("flostracke/salesdata")
 library(tidyverse)
-library(tidypreprocess)
+library(efor)
 
 sales_data <- sales_monthly
 ```

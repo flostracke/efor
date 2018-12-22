@@ -6,17 +6,17 @@ status](https://travis-ci.org/flostracke/efor.svg?branch=master)](https://travis
 [![Coverage
 status](https://codecov.io/gh/flostracke/efor/branch/master/graph/badge.svg)](https://codecov.io/github/flostracke/efor?branch=master)
 
-# tidypreprocess
+# efor
 
-The goal of tidypreprocess is to make it easier if you have to apply
-preprocessing to multiple timesereis
+The goal of efor is to make it easier if you have to apply preprocessing
+to multiple timesereis
 
 ## Installation
 
-You can install the released version of tidypreprocess from github with:
+You can install the released version of efor from github with:
 
 ``` r
-devtools::install_github("flostracke/tidypreprocess")
+devtools::install_github("flostracke/efor")
 ```
 
 ## Example
@@ -35,7 +35,7 @@ library(tidyverse)
 #> -- Conflicts ----------------------------------------------------------------------- tidyverse_conflicts() --
 #> x dplyr::filter() masks stats::filter()
 #> x dplyr::lag()    masks stats::lag()
-library(tidypreprocess)
+library(efor)
 
 sales_data <- sales_monthly
 ```
