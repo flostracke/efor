@@ -1,4 +1,4 @@
 library(testthat)
-library(tidypreprocess)
+library(efor)
 
-test_check("tidypreprocess")
+test_check("efor")
