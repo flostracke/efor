@@ -4,7 +4,7 @@
 [![Travis build
 status](https://travis-ci.org/flostracke/efor.svg?branch=master)](https://travis-ci.org/flostracke/efor)
 [![Coverage
-status](https://codecov.io/gh/flostracke/tidypreprocess/branch/master/graph/badge.svg)](https://codecov.io/github/flostracke/tidypreprocess?branch=master)
+status](https://codecov.io/gh/flostracke/efor/branch/master/graph/badge.svg)](https://codecov.io/github/flostracke/efor?branch=master)
 
 # tidypreprocess
 
