@@ -220,7 +220,7 @@ tf_prophet <- function(data, n_pred, freq, ...) {
                                   freq = used_freq,
                                   include_history = FALSE)
 
-  forecast <- prophet:::predict.prophet(mod_prophet, future) %>%
+  forecast <- prophet::predict.prophet(mod_prophet, future) %>%
     dplyr::mutate(key = "prophet",
            iterate = current_iterate) %>%
     dplyr::select(date = ds, key, y = yhat, iterate) %>%
@@ -394,7 +394,7 @@ tf_mean_forecast <- function(data, h) {
   #construct the dataframe with the future values
   date <- timetk::tk_make_future_timeseries(idx = unique(data$date), n_future = h)
 
-  dates <- tibble(date) %>%
+  dates <- tibble::tibble(date) %>%
     # for cross join
     mutate(dummy = 1)
 
