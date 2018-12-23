@@ -25,7 +25,14 @@ Imports:
     stringr,
     timetk,
     tibbletime,
-    anomalize
+    anomalize,
+    furrr,
+    future,
+    lubridate,
+    prophet,
+    sweep,
+    tidyr,
+    yardstick
 Suggests:
     salesdata,
     testthat,
