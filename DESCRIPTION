@@ -29,6 +29,7 @@ Imports:
     furrr,
     future,
     lubridate,
+    rstan,
     prophet,
     sweep,
     tidyr,
