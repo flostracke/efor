@@ -396,12 +396,12 @@ tf_mean_forecast <- function(data, h) {
 
   dates <- tibble::tibble(date) %>%
     # for cross join
-    mutate(dummy = 1)
+    dplyr::mutate(dummy = 1)
 
   #construct the final tibble
   mean_forecasts <- dplyr::inner_join(value_mean, dates, by = c("dummy")) %>%
     dplyr::select(-dummy) %>%
-    mutate(key = "mean_forecast")
+    dplyr::mutate(key = "mean_forecast")
 
   return(mean_forecasts)
 }
