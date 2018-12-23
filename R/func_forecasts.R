@@ -298,7 +298,7 @@ tf_calc_rmse <- function(df_forecasts, df_test, detailed = F) {
 
   rmse_per_method <- df_forecasts %>%
     dplyr::select(date, key, iterate, y_hat = y) %>%
-    dplyr::nner_join(df_test, by = c("date", "iterate")) %>%
+    dplyr::inner_join(df_test, by = c("date", "iterate")) %>%
     dplyr::group_by(!!!group) %>%
     tidyr::nest() %>%
     dplyr::mutate(rmse_overall = purrr::map(data,
