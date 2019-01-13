@@ -30,7 +30,6 @@ Imports:
     future,
     lubridate,
     rstan,
-    prophet,
     sweep,
     tidyr,
     yardstick
