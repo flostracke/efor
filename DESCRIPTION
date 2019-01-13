@@ -31,7 +31,8 @@ Imports:
     lubridate,
     sweep,
     tidyr,
-    yardstick
+    yardstick,
+    stats
 Suggests:
     salesdata,
     testthat,
