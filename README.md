@@ -5,6 +5,7 @@
 status](https://travis-ci.org/flostracke/efor.svg?branch=master)](https://travis-ci.org/flostracke/efor)
 [![Coverage
 status](https://codecov.io/gh/flostracke/efor/branch/master/graph/badge.svg)](https://codecov.io/github/flostracke/efor?branch=master)
+[![stability-experimental](https://img.shields.io/badge/stability-experimental-orange.svg)](https://github.com/joethorley/stability-badges#experimental)
 
 # efor
 
@@ -27,12 +28,16 @@ First we load some packages for this example.
 
 library(salesdata) # devtools::install_github("flostracke/salesdata")
 library(tidyverse)
-#> -- Attaching packages -------------------------------------------------------------------- tidyverse 1.2.1 --
-#> v ggplot2 3.0.0     v purrr   0.2.5
-#> v tibble  1.4.2     v dplyr   0.7.8
-#> v tidyr   0.8.1     v stringr 1.3.1
-#> v readr   1.1.1     v forcats 0.3.0
-#> -- Conflicts ----------------------------------------------------------------------- tidyverse_conflicts() --
+#> -- Attaching packages ----------------------------------------------------------------------------------------------------- tidyverse 1.2.1 --
+#> v ggplot2 3.1.0     v purrr   0.2.5
+#> v tibble  2.0.1     v dplyr   0.7.8
+#> v tidyr   0.8.2     v stringr 1.3.1
+#> v readr   1.3.1     v forcats 0.3.0
+#> Warning: package 'ggplot2' was built under R version 3.5.2
+#> Warning: package 'tibble' was built under R version 3.5.2
+#> Warning: package 'tidyr' was built under R version 3.5.2
+#> Warning: package 'readr' was built under R version 3.5.2
+#> -- Conflicts -------------------------------------------------------------------------------------------------------- tidyverse_conflicts() --
 #> x dplyr::filter() masks stats::filter()
 #> x dplyr::lag()    masks stats::lag()
 library(efor)
