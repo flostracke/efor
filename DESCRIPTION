@@ -36,8 +36,7 @@ Suggests:
     salesdata,
     testthat,
     covr,
-    spelling,
-    prophet
+    spelling
 Remotes:
     flostracke/salesdata
 URL: https://github.com/flostracke/tidypreprocess
