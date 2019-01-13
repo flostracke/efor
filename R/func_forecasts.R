@@ -220,7 +220,7 @@ tf_prophet <- function(data, n_pred, freq, ...) {
                                   freq = used_freq,
                                   include_history = FALSE)
 
-  forecast <- prophet::predict.prophet(mod_prophet, future) %>%
+  forecast <- predict(mod_prophet, future) %>%
     dplyr::mutate(key = "prophet",
            iterate = current_iterate) %>%
     dplyr::select(date = ds, key, y = yhat, iterate) %>%
