@@ -29,7 +29,6 @@ Imports:
     furrr,
     future,
     lubridate,
-    rstan,
     sweep,
     tidyr,
     yardstick
@@ -37,7 +36,8 @@ Suggests:
     salesdata,
     testthat,
     covr,
-    spelling
+    spelling,
+    prophet
 Remotes:
     flostracke/salesdata
 URL: https://github.com/flostracke/tidypreprocess
