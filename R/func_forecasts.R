@@ -308,7 +308,7 @@ tf_calc_metrics <- function(df_forecasts, df_test, detailed = F) {
                                 estimate = y_hat
                               ))) %>%
     tidyr::unnest(metrics) %>%
-    select(key, iterate,  metric = .metric, -.estimator, value = .estimate) %>%
+    select(key,  metric = .metric, -.estimator, value = .estimate) %>%
     arrange(metric, value)
 
   return(metrics)
