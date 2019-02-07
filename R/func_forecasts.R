@@ -272,7 +272,7 @@ tf_prophet_grid <- function(data, test_data, n_pred, freq, parallel = F, paramet
   return(parameter_grid)
 }
 
-#' Creates the rmse for mutliple models.
+#' Creates the metrics for mutliple models.
 #'
 #' This function calculates the rmse for all contained forecasts in a dataframe.
 #' The different models have to be seperated with the help of the key column.
@@ -285,7 +285,7 @@ tf_prophet_grid <- function(data, test_data, n_pred, freq, parallel = F, paramet
 #'
 #' @return The calculated rmse for each method.
 #'
-tf_calc_rmse <- function(df_forecasts, df_test, detailed = F) {
+tf_calc_metrics <- function(df_forecasts, df_test, detailed = F) {
   # -- calculate the rmse per method
 
   # Make the grouping columns to symbols. Then they can be unquoted in the
@@ -296,22 +296,22 @@ tf_calc_rmse <- function(df_forecasts, df_test, detailed = F) {
     group <- rlang::sym("key")
   }
 
-  rmse_per_method <- df_forecasts %>%
+  metrics <- df_forecasts %>%
     dplyr::select(date, key, iterate, y_hat = y) %>%
     dplyr::inner_join(df_test, by = c("date", "iterate")) %>%
     dplyr::group_by(!!!group) %>%
     tidyr::nest() %>%
-    dplyr::mutate(rmse_overall = purrr::map(data,
-                              ~yardstick::rmse(
+    dplyr::mutate(metrics = purrr::map(data,
+                              ~yardstick::metrics(
                                 data = .x,
                                 truth = y,
                                 estimate = y_hat
                               ))) %>%
-    tidyr::unnest(rmse_overall) %>%
-    dplyr::select(-data, -.metric, -.estimator, rmse_overall = .estimate) %>%
-    dplyr::arrange(rmse_overall)
+    tidyr::unnest(metrics) %>%
+    select(key, metric = .metric, -.estimator, value = .estimate) %>%
+    arrange(metric, value)
 
-  return(rmse_per_method)
+  return(metrics)
 }
 
 #' Function for applying the forecast::tsclean function
