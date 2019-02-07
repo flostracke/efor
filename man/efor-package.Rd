@@ -4,13 +4,13 @@
 \name{efor-package}
 \alias{efor}
 \alias{efor-package}
-\title{efor: efor: Easy Forecasts, a package for helping creating forecasts.}
+\title{efor: efor: Easy Forecasts, a package for helping creating forecasts}
 \description{
 The package efor provides a set of functions which help to work with multiple
-timeseries. The package is providing a set of functions for
-applying different preprocess and transformations methods to multiple
-timeseries saved in a dataframe. Furthermore it helps modelling and evaluating
-the resulting models.
+    timeseries. The package is providing a set of functions for 
+    applying different preprocess and transformations methods to multiple
+    timeseries saved in a dataframe. Furthermore it helps modelling and evaluating
+    the resulting models.
 }
 \seealso{
 Useful links:
