@@ -19,7 +19,9 @@ knitr::opts_chunk$set(
 ```
 # efor
 
-The goal of efor is to make it easier if you have to apply preprocessing to multiple timesereis
+The goal of efor is to make it easier if you have to forecast or apply preprocessing to multiple timesereis.
+Furthermore the the package supports in transforming timeseries data for applying machine learning or deeplearning to it.
+(Creation of lagged values, boxcox transformation)
 
 ## Installation
 
@@ -34,16 +36,20 @@ devtools::install_github("flostracke/efor")
 First we load some packages for this example.
 ```{r}
 
-library(salesdata) # devtools::install_github("flostracke/salesdata")
+library(salesdata) # devtools::install_github("flostracke/salesdata"). Some example data
 library(tidyverse)
 library(efor)
+library(furrr) # for running the forecasting in parallel
+library(forecast)
+library(prophet)
 
 sales_data <- sales_monthly
 ```
 
-We have some sales data for four articles. Prior to forecasting to these series
-we want to apply the boxcox transformation. This makes the series normal 
-distributed.
+We have some sales data for four articles. We want to create forecasts for all these articles.
+The efor package makes this quite easy, because it provides functionality to create forecasts
+for multiple articles with one line of code. Right now you can use the forecast package or 
+the prophet package.
 
 ```{r}
 
@@ -54,57 +60,79 @@ ggplot(sales_data, aes(x = date, y = y)) +
   ggtitle("The original series")
 ```
 
-We retrieve the lambdas for the dataset. With these lambdas we can revert
-the boxcox transformation.
+We split the dataset in a train and test set. All observations from the year 2016
+go to the test set. We want to create forecasts for the next 4 months of the testset 
+and evaluate the performance.
 
 ```{r}
-lambdas <- tf_get_lambdas(sales_data)
+train_data <- sales_data %>% 
+  filter(date < "2016-01-01")
 
-lambdas
+test_data <- sales_data %>% 
+  filter(date >= "2016-01-01")
 ```
 
-Apply the boxcox transformation
-
+Now we can apply the the auto.arima function to the dataset and create the forecasts.
 ```{r}
-
-sales_data_trans <- tf_boxcox(sales_data)
+forecasts_ar <- tf_grouped_forecasts(
+  train_data, # used training dataset
+  n_pred = 4, # number of predictions
+  func = auto.arima, # used forecasting method
+  freq = 12 # Frequency. 12 for monthly data, 1 for daily data
+)
 ```
 
-A quick plot of the transformed data:
+With the same syntax you can create forecasts utilizing the prophet package:
+Please note that there we disable the parallel function for prophet, because there 
+is some bug right now.
+
 ```{r}
-ggplot(sales_data_trans, aes(x = date, y = y)) +
-  geom_line() +
+forecasts_prophet <- tf_grouped_forecasts(
+  train_data, # used training dataset
+  n_pred = 4, # number of predictions
+  func = prophet, # used forecasting method
+  freq = 12, # Frequency. 12 for monthly data, 1 for daily data
+  parallel = FALSE
+)
+```
+
+In order to create some plots and evaluate the performance we combine the forecasts
+into one dataset.
+
+```{r}
+forecasts <- bind_rows(forecasts_ar, forecasts_prophet)
+```
+
+The package brings also a function which makes ist quite easy to access the performance (right now thhe mae, rmse and rsquared is calculated)of multiple methods:
+
+```{r}
+tf_calc_metrics(forecasts, test_data)
+```
+
+Also it is possible to access the performance of each article:
+
+```{r}
+tf_calc_metrics(forecasts, test_data, detailed = TRUE)
+```
+
+Finally we create a quick graph visualising the results of the forecasts.
+
+```{r}
+train_data <- train_data %>% 
+  mutate(key = "train")
+
+test_data <- test_data %>% 
+  mutate(key = "test")
+
+bind_rows(train_data, test_data) %>% 
+  bind_rows(forecasts) %>% 
+  ggplot(aes(x = date, y = y, color = key)) +
   geom_point() +
+  geom_line() +
   facet_wrap(~iterate) +
-  ggtitle("The boxcox transformed series")
+  ggtitle("Forecasted values for each article") +
+  ylab("Sales amount")
 ```
-
-Now we remove the transformation
-
-```{r}
-
-sales_data_retransformed <- tf_remove_boxcox(sales_data_trans, lambdas) %>%
-
-  # we round the numbers in order to compare for resulting differences due to the
-  # backtransformation
-  mutate(y = round(y,0))
-```
-
-The transformation and the backtransformation is working
-
-```{r}
-sales_data %>%
-  left_join(
-    sales_data_retransformed,
-    by = c("date", "iterate"),
-    suffix = c("_orig", "_trans")
-  ) %>%
-  mutate(diff = y_orig - y_trans) %>%
-  filter(diff != 0)
-```
-
-
-
 
 
 
