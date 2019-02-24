@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 ```
 # efor
 
-The goal of efor is to make it easier if you have to apply preprocessing to multiple timesereis
+The goal of efor is to make it easier if you have to apply preprocessing to multiple timeseries.
 
 ## Installation
 

@@ -10,7 +10,7 @@ status](https://codecov.io/gh/flostracke/efor/branch/master/graph/badge.svg)](ht
 # efor
 
 The goal of efor is to make it easier if you have to forecast or apply
-preprocessing to multiple timesereis. Furthermore the the package
+preprocessing to multiple timeseries. Furthermore the the package
 supports in transforming timeseries data for applying machine learning
 or deeplearning to it. (Creation of lagged values, boxcox
 transformation)
@@ -31,28 +31,10 @@ First we load some packages for this example.
 
 library(salesdata) # devtools::install_github("flostracke/salesdata"). Some example data
 library(tidyverse)
-#> -- Attaching packages -------------------------------------------------------------------------------------------- tidyverse 1.2.1 --
-#> v ggplot2 3.1.0     v purrr   0.3.0
-#> v tibble  2.0.1     v dplyr   0.8.0
-#> v tidyr   0.8.2     v stringr 1.4.0
-#> v readr   1.3.1     v forcats 0.3.0
-#> -- Conflicts ----------------------------------------------------------------------------------------------- tidyverse_conflicts() --
-#> x dplyr::filter() masks stats::filter()
-#> x dplyr::lag()    masks stats::lag()
 library(efor)
 library(furrr) # for running the forecasting in parallel
-#> Loading required package: future
-library(forecast)
-library(prophet)
-#> Loading required package: Rcpp
-#> Loading required package: rlang
-#> 
-#> Attaching package: 'rlang'
-#> The following objects are masked from 'package:purrr':
-#> 
-#>     %@%, as_function, flatten, flatten_chr, flatten_dbl,
-#>     flatten_int, flatten_lgl, flatten_raw, invoke, list_along,
-#>     modify, prepend, splice
+library(forecast) #provides forecast mehotds
+library(prophet) # provides forecast mehod
 
 sales_data <- sales_monthly
 ```
@@ -110,14 +92,6 @@ forecasts_prophet <- tf_grouped_forecasts(
   freq = 12, # Frequency. 12 for monthly data, 1 for daily data
   parallel = FALSE
 )
-#> Disabling weekly seasonality. Run prophet with weekly.seasonality=TRUE to override this.
-#> Disabling daily seasonality. Run prophet with daily.seasonality=TRUE to override this.
-#> Disabling weekly seasonality. Run prophet with weekly.seasonality=TRUE to override this.
-#> Disabling daily seasonality. Run prophet with daily.seasonality=TRUE to override this.
-#> Disabling weekly seasonality. Run prophet with weekly.seasonality=TRUE to override this.
-#> Disabling daily seasonality. Run prophet with daily.seasonality=TRUE to override this.
-#> Disabling weekly seasonality. Run prophet with weekly.seasonality=TRUE to override this.
-#> Disabling daily seasonality. Run prophet with daily.seasonality=TRUE to override this.
 ```
 
 In order to create some plots and evaluate the performance we combine

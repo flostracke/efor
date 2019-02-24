@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 ```
 # efor
 
-The goal of efor is to make it easier if you have to forecast or apply preprocessing to multiple timesereis.
+The goal of efor is to make it easier if you have to forecast or apply preprocessing to multiple timeseries.
 Furthermore the the package supports in transforming timeseries data for applying machine learning or deeplearning to it.
 (Creation of lagged values, boxcox transformation)
 
@@ -34,14 +34,14 @@ devtools::install_github("flostracke/efor")
 ## Example
 
 First we load some packages for this example.
-```{r}
+```{r message=FALSE, warning=FALSE}
 
 library(salesdata) # devtools::install_github("flostracke/salesdata"). Some example data
 library(tidyverse)
 library(efor)
 library(furrr) # for running the forecasting in parallel
-library(forecast)
-library(prophet)
+library(forecast) #provides forecast mehotds
+library(prophet) # provides forecast mehod
 
 sales_data <- sales_monthly
 ```
@@ -86,7 +86,7 @@ With the same syntax you can create forecasts utilizing the prophet package:
 Please note that there we disable the parallel function for prophet, because there 
 is some bug right now.
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 forecasts_prophet <- tf_grouped_forecasts(
   train_data, # used training dataset
   n_pred = 4, # number of predictions
