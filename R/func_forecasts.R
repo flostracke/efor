@@ -243,31 +243,37 @@ tf_prophet <- function(data, n_pred, freq, ...) {
 #'
 #' @return A dataframe with the rmse for each parameter combination
 #'
-tf_prophet_grid <- function(data, test_data, n_pred, freq, parallel = F, parameter_grid) {
+tf_prophet_grid <- function(data, test_data, n_pred, freq, parallel = F, parameter_grid, ...) {
+
+  #INIT Columns for rmse
+  parameter_grid$rmse <- NA
 
   #Iterate over all passed parameter combinations
-  # Search best parameters
+  # Search best parameters. Rewrite with furrr::map=
   for (i in 1:nrow(parameter_grid)) {
 
-    parameters = parameter_grid[i, ]
-    error = c()
+    parameters <- parameter_grid[i, ]
 
-    forecasts = tf_grouped_forecasts(data,
-                                     n_pred,
-                                     prophet,
-                                     freq,
-                                     parallel,
-                                     growth = 'linear',
-                                     seasonality.prior.scale = parameters$seaslity_prior_scale,
-                                     changepoint.prior.scale = parameters$changepoint_prior_scale,
-                                     n.changepoints = parameters$n_changepoints,
-                                     weekly.seasonality = F,
-                                     daily.seasonality = F)
+    forecasts <-
+      tf_grouped_forecasts(
+        data,
+        n_pred,
+        prophet,
+        freq,
+        parallel,
+        #specific prophet parameters
+        seasonality.prior.scale = parameters$seasonality.prior.scale,
+        changepoint.prior.scale = parameters$changepoint.prior.scale,
+        changepoint.range = parameters$changepoint.range,
+        seasonality.mode = parameters$seasonality.mode,
+        ...
+      )
 
     calced_rmse <- dplyr::inner_join(test_data, forecasts, by = c("iterate", "date")) %>%
-      yardstick::rmse(y.x, y.y)
+      yardstick::rmse(y.x, y.y) %>%
+      pull(.estimate)
 
-    parameter_grid$Value[i] = calced_rmse
+    parameter_grid$rmse[i] <- calced_rmse
   }
   return(parameter_grid)
 }
