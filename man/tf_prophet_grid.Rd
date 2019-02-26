@@ -5,7 +5,7 @@
 \title{Gridseach for Prophetmodels.}
 \usage{
 tf_prophet_grid(data, test_data, n_pred, freq, parallel = F,
-  parameter_grid)
+  parameter_grid, ...)
 }
 \arguments{
 \item{data}{The Dataframe containing the data}
