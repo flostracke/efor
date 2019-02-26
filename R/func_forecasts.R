@@ -243,7 +243,7 @@ tf_prophet <- function(data, n_pred, freq, ...) {
 #'
 #' @return A dataframe with the rmse for each parameter combination
 #'
-tf_prophet_grid <- function(data, test_data, n_pred, freq, parallel = F, parameter_grid, ...) {
+tf_prophet_grid <- function(data, test_data, n_pred, freq, parallel = FALSE, parameter_grid, ...) {
 
   #INIT Columns for rmse
   parameter_grid$rmse <- NA
