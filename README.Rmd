@@ -28,7 +28,7 @@ Furthermore the the package supports in transforming timeseries data for applyin
 You can install the released version of efor from github with:
 
 ``` r
-devtools::install_github("flostracke/efor")
+#devtools::install_github("flostracke/efor")
 ```
 
 ## Example
@@ -42,6 +42,7 @@ library(efor)
 library(furrr) # for running the forecasting in parallel
 library(forecast) #provides forecast mehotds
 library(prophet) # provides forecast mehod
+library(tidyquant) # for nicer plots
 
 sales_data <- sales_monthly
 ```
@@ -57,7 +58,8 @@ ggplot(sales_data, aes(x = date, y = y)) +
   geom_line() +
   geom_point() +
   facet_wrap(~iterate) +
-  ggtitle("The original series")
+  ggtitle("The original series") +
+  theme_tq()
 ```
 
 We split the dataset in a train and test set. All observations from the year 2016
@@ -131,8 +133,13 @@ bind_rows(train_data, test_data) %>%
   geom_line() +
   facet_wrap(~iterate) +
   ggtitle("Forecasted values for each article") +
-  ylab("Sales amount")
+  ylab("Sales amount") +
+  theme_tq()
 ```
 
+And we can plot the forecasts against the actual forecasts:
+```{r}
+tf_plot_preds_actuals(forecasts, select(test_data, -key))
+```
 
 
