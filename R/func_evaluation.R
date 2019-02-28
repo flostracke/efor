@@ -13,8 +13,8 @@
 tf_plot_preds_actuals <- function(forecasts, test) {
 
   #verifies the input has the correct format
-  check_input_data(forecasts)
-  check_input_data(test)
+  #check_input_data(forecasts)
+  #check_input_data(test)
 
   #prepare the labels with ordered rmse
   rmse_labels <- tf_calc_metrics(forecasts, test) %>%
