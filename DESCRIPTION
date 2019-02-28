@@ -32,7 +32,8 @@ Imports:
     sweep,
     tidyr,
     yardstick,
-    stats
+    stats,
+    tidyquant
 Suggests:
     salesdata,
     testthat,

@@ -4,7 +4,7 @@
 \alias{tf_prophet_grid}
 \title{Gridseach for Prophetmodels.}
 \usage{
-tf_prophet_grid(data, test_data, n_pred, freq, parallel = F,
+tf_prophet_grid(data, test_data, n_pred, freq, parallel = FALSE,
   parameter_grid, ...)
 }
 \arguments{
