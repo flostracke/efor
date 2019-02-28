@@ -120,13 +120,13 @@ tf_calc_metrics(forecasts, test_data, detailed = TRUE)
 Finally we create a quick graph visualising the results of the forecasts.
 
 ```{r}
-train_data <- train_data %>% 
+train_data_plot <- train_data %>% 
   mutate(key = "train")
 
-test_data <- test_data %>% 
+test_data_plot <- test_data %>% 
   mutate(key = "test")
 
-bind_rows(train_data, test_data) %>% 
+bind_rows(train_data_plot, test_data_plot) %>% 
   bind_rows(forecasts) %>% 
   ggplot(aes(x = date, y = y, color = key)) +
   geom_point() +
@@ -139,7 +139,7 @@ bind_rows(train_data, test_data) %>%
 
 And we can plot the forecasts against the actual forecasts:
 ```{r}
-tf_plot_preds_actuals(forecasts, select(test_data, -key))
+tf_plot_preds_actuals(forecasts, test_data)
 ```
 
 
