@@ -258,7 +258,7 @@ tf_prophet_grid <- function(data, test_data, n_pred, freq, parallel = FALSE, par
       tf_grouped_forecasts(
         data,
         n_pred,
-        prophet,
+        prophet::prophet,
         freq,
         parallel,
         #specific prophet parameters
