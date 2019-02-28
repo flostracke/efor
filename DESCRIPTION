@@ -33,7 +33,9 @@ Imports:
     tidyr,
     yardstick,
     stats,
-    tidyquant
+    tidyquant,
+    ggplot2,
+    forcats
 Suggests:
     salesdata,
     testthat,
