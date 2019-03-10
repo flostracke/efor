@@ -59,7 +59,7 @@ ggplot(sales_data, aes(x = date, y = y)) +
   geom_point() +
   facet_wrap(~iterate) +
   ggtitle("The original series") +
-  theme_tq()
+  theme_tq() 
 ```
 
 We split the dataset in a train and test set. All observations from the year 2016
@@ -134,7 +134,8 @@ bind_rows(train_data_plot, test_data_plot) %>%
   facet_wrap(~iterate) +
   ggtitle("Forecasted values for each article") +
   ylab("Sales amount") +
-  theme_tq()
+  theme_tq() +
+  scale_fill_viridis(option="magma")
 ```
 
 And we can plot the forecasts against the actual forecasts:
