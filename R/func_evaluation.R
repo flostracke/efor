@@ -61,7 +61,7 @@ tf_count_best_method <- function(forecasts, testset, metric = "rmse") {
 
   metric_var <- rlang::enquo(metric)
 
-  dtl_metrics <- tf_calc_metrics(forecasts, test_data, detailed = TRUE) %>%
+  dtl_metrics <- tf_calc_metrics(forecasts, testset, detailed = TRUE) %>%
     filter(metric == !!metric_var)
 
   #get the minimum rmse for each iterate
