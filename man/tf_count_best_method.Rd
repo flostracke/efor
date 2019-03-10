@@ -4,7 +4,7 @@
 \alias{tf_count_best_method}
 \title{Counts how often each method is the best method against a testset.}
 \usage{
-tf_count_best_method(forecasts, testset, metric = "rmse")
+tf_count_best_method(forecasts, testset, metric = "rmse", plot = FALSE)
 }
 \arguments{
 \item{forecasts}{The dataframe with all the forecasts included}
@@ -12,6 +12,8 @@ tf_count_best_method(forecasts, testset, metric = "rmse")
 \item{testset}{The testset for counting the best method}
 
 \item{metric}{The specified metric for choosing the best method}
+
+\item{plot}{Plots the count distribution.}
 }
 \value{
 The dataframe with the information how many times each method has been the best method

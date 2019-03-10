@@ -51,36 +51,47 @@ tf_calc_metrics <- function(df_forecasts, df_test, detailed = F) {
 #' @param forecasts The dataframe with all the forecasts included
 #' @param testset The testset for counting the best method
 #' @param metric The specified metric for choosing the best method
+#' @param plot Plots the count distribution.
 #'
 #' @return The dataframe with the information how many times each method has been the best method
 #' @export
 #'
 #' @examples
-tf_count_best_method <- function(forecasts, testset, metric = "rmse") {
+tf_count_best_method <- function(forecasts, testset, metric = "rmse", plot = FALSE) {
 
 
   metric_var <- rlang::enquo(metric)
 
   dtl_metrics <- tf_calc_metrics(forecasts, testset, detailed = TRUE) %>%
-    filter(metric == !!metric_var)
+    dplyr::filter(metric == !!metric_var)
 
   #get the minimum rmse for each iterate
   min_metrics <- dtl_metrics %>%
-    group_by(iterate) %>%
-    summarise(value = min(value))
+    dplyr::group_by(iterate) %>%
+    dplyr::summarise(value = min(value))
 
   #now innerjoin the min rmse against the rmse of all methods and count how ofteh each method is the best
   count_best_method <- dtl_metrics %>%
-    inner_join(min_metrics, by = c("iterate", "value")) %>%
-    count(key)
+    dplyr::inner_join(min_metrics, by = c("iterate", "value")) %>%
+    dplyr::count(key)
 
-  return(count_best_method)
+  if(plot == TRUE) {
 
+    count_best_method %>%
+      ggplot2::ggplot(aes(reorder(key, n), n)) +
+      ggplot2::geom_bar(stat = "identity", fill = "steelblue") +
+      ggplot2::coord_flip() +
+      ggplot2::labs(
+        title = "How often is each method the best forecast?",
+        x = "used forecasting method",
+        y = "# is the best method"
+      ) +
+      tidyquant::theme_tq()
+
+  } else {
+    return(count_best_method)
+  }
 }
-
-
-
-
 
 
 
