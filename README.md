@@ -20,7 +20,7 @@ transformation)
 You can install the released version of efor from github with:
 
 ``` r
-devtools::install_github("flostracke/efor")
+#devtools::install_github("flostracke/efor")
 ```
 
 ## Example
@@ -35,6 +35,7 @@ library(efor)
 library(furrr) # for running the forecasting in parallel
 library(forecast) #provides forecast mehotds
 library(prophet) # provides forecast mehod
+library(tidyquant) # for nicer plots
 
 sales_data <- sales_monthly
 ```
@@ -51,7 +52,8 @@ ggplot(sales_data, aes(x = date, y = y)) +
   geom_line() +
   geom_point() +
   facet_wrap(~iterate) +
-  ggtitle("The original series")
+  ggtitle("The original series") +
+  theme_tq()
 ```
 
 <img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
@@ -142,20 +144,29 @@ Finally we create a quick graph visualising the results of the
 forecasts.
 
 ``` r
-train_data <- train_data %>% 
+train_data_plot <- train_data %>% 
   mutate(key = "train")
 
-test_data <- test_data %>% 
+test_data_plot <- test_data %>% 
   mutate(key = "test")
 
-bind_rows(train_data, test_data) %>% 
+bind_rows(train_data_plot, test_data_plot) %>% 
   bind_rows(forecasts) %>% 
   ggplot(aes(x = date, y = y, color = key)) +
   geom_point() +
   geom_line() +
   facet_wrap(~iterate) +
   ggtitle("Forecasted values for each article") +
-  ylab("Sales amount")
+  ylab("Sales amount") +
+  theme_tq()
 ```
 
 <img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
+
+And we can plot the forecasts against the actual forecasts:
+
+``` r
+tf_plot_preds_actuals(forecasts, test_data)
+```
+
+<img src="man/figures/README-unnamed-chunk-10-1.png" width="100%" />
