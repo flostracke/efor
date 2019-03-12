@@ -19,8 +19,8 @@ Returns the series with the boxcox transformation removed.
 Removes the boxcox transformation applied to multiple timeseries.
 }
 \examples{
-lambdas <- tf_get_lambdas(salesdata::sales_monthly)
-          boxcox <- salesdata::sales_monthly \%>\%
+lambdas <- tf_get_lambdas(sales_monthly)
+          boxcox <- sales_monthly \%>\%
           tf_boxcox()
           tf_remove_boxcox(boxcox, lambdas)
 

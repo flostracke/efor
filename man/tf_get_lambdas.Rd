@@ -19,6 +19,6 @@ lambdas are fitted on the data. The lambdas are returned for multiple
 timeseries in a dataframe, if there is a column "iterate".
 }
 \examples{
-tf_get_lambdas(salesdata::sales_monthly)
+tf_get_lambdas(sales_monthly)
 
 }

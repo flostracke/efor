@@ -21,6 +21,6 @@ The function creates additional features from the date column. You can get
 a stripped down version for monthly data with type = "monthly
 }
 \examples{
-salesdata::sales_monthly \%>\%
+sales_monthly \%>\%
             tf_add_time_features(type = "monthly")
 }

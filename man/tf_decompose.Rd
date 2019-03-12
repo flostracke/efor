@@ -21,5 +21,5 @@ Function calls anomalize::time_decompose() internal and decomposes all
 series in the tibble
 }
 \examples{
-tf_decompose(salesdata::sales_monthly)
+tf_decompose(sales_monthly)
 }

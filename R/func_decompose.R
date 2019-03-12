@@ -10,7 +10,7 @@
 #' @return The decomposed timeseries in the tibble object
 #' @export
 #'
-#' @examples tf_decompose(salesdata::sales_monthly)
+#' @examples tf_decompose(sales_monthly)
 tf_decompose <- function(data, ...) {
 
   data %>%

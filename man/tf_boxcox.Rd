@@ -16,6 +16,6 @@ The data with boxcox transformed values.
 Applies the boxcox transformation to multiple timeseries.
 }
 \examples{
-tf_boxcox(salesdata::sales_monthly)
+tf_boxcox(sales_monthly)
 
 }

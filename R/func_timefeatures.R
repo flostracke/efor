@@ -11,7 +11,7 @@
 #' @return The dataframe with the additional features
 #' @export
 #'
-#' @examples salesdata::sales_monthly %>%
+#' @examples sales_monthly %>%
 #'             tf_add_time_features(type = "monthly")
 tf_add_time_features <- function(data, type = "all") {
 
