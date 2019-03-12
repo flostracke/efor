@@ -20,7 +20,7 @@ The dataset with the removed log transformation.
 This function rempves
 }
 \examples{
-salesdata::sales_monthly \%>\%
+sales_monthly \%>\%
            tf_log() \%>\%
            tf_remove_log()
 }

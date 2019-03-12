@@ -24,5 +24,5 @@ This functions applies a log transformation to multiple timeseries. There
 has to be column y in the dataset.
 }
 \examples{
-tf_log(salesdata::sales_monthly)
+tf_log(sales_monthly)
 }

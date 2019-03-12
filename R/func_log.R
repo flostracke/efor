@@ -12,7 +12,7 @@
 #' @return Return the log transformed data.
 #' @export
 #'
-#' @examples tf_log(salesdata::sales_monthly)
+#' @examples tf_log(sales_monthly)
 tf_log <- function(data, constant = 0.00001, ...) {
 
   #check input data for correct structure
@@ -37,7 +37,7 @@ tf_log <- function(data, constant = 0.00001, ...) {
 #' @return The dataset with the removed log transformation.
 #' @export
 #'
-#' @examples salesdata::sales_monthly %>%
+#' @examples sales_monthly %>%
 #'            tf_log() %>%
 #'            tf_remove_log()
 tf_remove_log <- function(data, constant = 0.00001) {
