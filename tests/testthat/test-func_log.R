@@ -7,7 +7,7 @@ context("test-func_log")
 # -- Test log transformation is working ----
 test_that("log works", {
 
-  first_log <-  salesdata::sales_monthly %>%
+  first_log <-  sales_monthly %>%
     tf_log() %>%
     head(1) %>%
     dplyr::pull(y)
