@@ -6,7 +6,7 @@ context("test-func_boxcox")
 # -- Test boxcox transformation and backtransformation is working. ----
 test_that("boxcox_inverse", {
 
-  sales_data <- salesdata::sales_monthly
+  sales_data <- sales_monthly
 
   # We retrieve the lambdas for the dataset. With these lambdas we can revert
   # the boxcox transformation.
@@ -42,7 +42,7 @@ test_that("boxcox_inverse", {
 # -- Test retrieving the lambdas is working ----
 test_that("boxcox_lambda", {
 
-  sales_data <- salesdata::sales_monthly
+  sales_data <- sales_monthly
 
   # get an example lambda value
   lambda <- tf_get_lambdas(sales_data) %>%
@@ -56,7 +56,7 @@ test_that("boxcox_lambda", {
 # -- Test the boxcox transformation is working ----
 test_that("boxcox_trans", {
 
-  sales_data <- salesdata::sales_monthly
+  sales_data <- sales_monthly
 
   transed_value <- tf_boxcox(sales_data) %>%
     head(1) %>%

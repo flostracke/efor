@@ -23,7 +23,7 @@ Function can create
 }
 \examples{
 tf_create_lags(
-            salesdata::sales_monthly,
+            sales_monthly,
             lag_var = y,
             n_lags = 1:6
           )

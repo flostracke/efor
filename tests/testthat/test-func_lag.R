@@ -4,7 +4,7 @@ context("test-func_lag")
 
 test_that("creating lagged variables works", {
 
-  testdata <- salesdata::sales_monthly
+  testdata <- sales_monthly
   firstvalue <- testdata[1, "y"]
 
   lagged_data <- efor::tf_create_lags(testdata, lag_var = y, 1:4)

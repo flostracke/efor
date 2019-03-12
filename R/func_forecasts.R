@@ -347,7 +347,7 @@ tf_clean_grouped_ts <- function(data, parallel = T, ...) {
 #' @return The tibble with the mean forecasts
 #' @export
 #'
-#' @examples tf_mean_forecast(salesdata::sales_monthly, h = 2)
+#' @examples tf_mean_forecast(sales_monthly, h = 2)
 tf_mean_forecast <- function(data, h) {
 
   #get the mean values for each iterate

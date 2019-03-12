@@ -19,5 +19,5 @@ Throws an error if the structure is wrong
 - y column: datatype numeric
 }
 \examples{
- check_input_data(salesdata::sales_monthly)
+ check_input_data(sales_monthly)
 }

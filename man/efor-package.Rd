@@ -15,8 +15,8 @@ The package efor provides a set of functions which help to work with multiple
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/flostracke/tidypreprocess}
-  \item Report bugs at \url{https://github.com/flostracke/tidypreprocess/issues}
+  \item \url{https://github.com/flostracke/efor}
+  \item Report bugs at \url{https://github.com/flostracke/efor/issues}
 }
 
 }

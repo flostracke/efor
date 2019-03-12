@@ -18,6 +18,6 @@ The dataframe with only n unique iterates
 Gets a subet of n iterates of the dataset
 }
 \examples{
-get_subset(salesdata::sales_daily, n = 1)
+get_subset(sales_daily, n = 1)
 
 }

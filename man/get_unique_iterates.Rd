@@ -16,6 +16,6 @@ The vector with the unique iterates
 Function returns a vector with the unique iterates in a dataset
 }
 \examples{
-get_unique_iterates(salesdata::sales_daily)
+get_unique_iterates(sales_daily)
 
 }

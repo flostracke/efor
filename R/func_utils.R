@@ -10,7 +10,7 @@
 #' @return The vector with the unique iterates
 #' @export
 #'
-#' @examples get_unique_iterates(salesdata::sales_daily)
+#' @examples get_unique_iterates(sales_daily)
 #'
 get_unique_iterates <- function(data) {
 
@@ -33,7 +33,7 @@ get_unique_iterates <- function(data) {
 #' @return The dataframe with only n unique iterates
 #' @export
 #'
-#' @examples get_subset(salesdata::sales_daily, n = 1)
+#' @examples get_subset(sales_daily, n = 1)
 #'
 get_subset <- function(data, n) {
 
@@ -61,7 +61,7 @@ get_subset <- function(data, n) {
 #' @return Throws an error if the structure is wrong
 #' @export
 #'
-#' @examples  check_input_data(salesdata::sales_monthly)
+#' @examples  check_input_data(sales_monthly)
 
 check_input_data <- function(data) {
 

@@ -36,7 +36,6 @@ You can install the released version of efor from github with:
 First we load some packages for this example.
 ```{r message=FALSE, warning=FALSE}
 
-library(salesdata) # devtools::install_github("flostracke/salesdata"). Some example data
 library(tidyverse)
 library(efor)
 library(furrr) # for running the forecasting in parallel

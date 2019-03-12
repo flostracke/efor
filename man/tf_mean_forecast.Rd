@@ -18,5 +18,5 @@ The tibble with the mean forecasts
 Returns a simple mean forecast for each iterate
 }
 \examples{
-tf_mean_forecast(salesdata::sales_monthly, h = 2)
+tf_mean_forecast(sales_monthly, h = 2)
 }
