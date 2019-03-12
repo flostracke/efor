@@ -142,3 +142,26 @@ tf_plot_preds_actuals <- function(forecasts, test) {
     ) +
     tidyquant::theme_tq()
 }
+
+
+#' Plots the distribtuion of the residuals of each method
+#'
+#' @param testset The testset with the acutal values
+#' @param forecasts The dataset with the forecasted values
+#'
+#' @return
+#' @export
+#'
+#' @examples
+tf_plot_residuals <- function(testset, forecasts) {
+
+  forecasts %>%
+    dplyr::select(date, key, iterate,  y_hat = y) %>%
+    dplyr::inner_join(df_test_orig, by = c("date","iterate")) %>%
+    dplyr::mutate(residuals = y - y_hat) %>%
+    ggplot2::ggplot(aes(x = residuals)) +
+    ggplot2::geom_histogram() +
+    ggplot2::facet_wrap(~key) +
+    tidyquant::theme_tq() +
+    ggplot2::geom_rug(alpha = 0.2)
+}
