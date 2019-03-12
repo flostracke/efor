@@ -153,11 +153,11 @@ tf_plot_preds_actuals <- function(forecasts, test) {
 #' @export
 #'
 #' @examples
-tf_plot_residuals <- function(testset, forecasts) {
+tf_plot_residuals <- function(forecasts, testset) {
 
   forecasts %>%
     dplyr::select(date, key, iterate,  y_hat = y) %>%
-    dplyr::inner_join(df_test_orig, by = c("date","iterate")) %>%
+    dplyr::inner_join(testset, by = c("date","iterate")) %>%
     dplyr::mutate(residuals = y - y_hat) %>%
     ggplot2::ggplot(aes(x = residuals)) +
     ggplot2::geom_histogram() +

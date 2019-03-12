@@ -143,4 +143,10 @@ And we can plot the forecasts against the actual forecasts:
 tf_plot_preds_actuals(forecasts, test_data)
 ```
 
+Add the distribtuion of the residuals:
+
+```{r}
+tf_plot_residuals(test_data, forecasts)
+```
+
 
