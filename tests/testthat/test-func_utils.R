@@ -6,7 +6,7 @@ context("test-func_utils")
 
 # the main function
 test_that("check the main test function", {
-  exdata <- salesdata::sales_monthly %>%
+  exdata <- sales_monthly %>%
     dplyr::mutate(y = as.character(y))
 
   expect_error(check_input_data(exdata))
@@ -16,7 +16,7 @@ test_that("check the main test function", {
 
 # date column
 test_that("check date column exists", {
-  exdata <- salesdata::sales_monthly %>%
+  exdata <- sales_monthly %>%
     dplyr::rename(column1 = date)
 
   expect_error(check_correct_name(exdata))
@@ -24,7 +24,7 @@ test_that("check date column exists", {
 
 # iterate column
 test_that("check iterate column exists", {
-  exdata <- salesdata::sales_monthly %>%
+  exdata <- sales_monthly %>%
     dplyr::rename(column1 = iterate)
 
   expect_error(check_correct_name(exdata))
@@ -32,7 +32,7 @@ test_that("check iterate column exists", {
 
 # y column
 test_that("check y column exists", {
-  exdata <- salesdata::sales_monthly %>%
+  exdata <- sales_monthly %>%
     dplyr::rename(column1 = y)
 
   expect_error(check_correct_name(exdata))
@@ -42,7 +42,7 @@ test_that("check y column exists", {
 
 # check date column
 test_that("check date column is correct datatype", {
-  exdata <- salesdata::sales_monthly %>%
+  exdata <- sales_monthly %>%
     dplyr::mutate(date = as.character(date))
 
   expect_error(check_correct_datatype(exdata))
@@ -51,7 +51,7 @@ test_that("check date column is correct datatype", {
 #iterate column
 test_that("check iterate column is correct datatype", {
 
-  exdata <- salesdata::sales_monthly %>%
+  exdata <- sales_monthly %>%
     dplyr::mutate(iterate = n()) %>%
     dplyr::mutate(iterate = as.integer(iterate))
 
@@ -60,7 +60,7 @@ test_that("check iterate column is correct datatype", {
 
 # check y column
 test_that("check y column is correct datatype", {
-  exdata <- salesdata::sales_monthly %>%
+  exdata <- sales_monthly %>%
     dplyr::mutate(y = as.character(y))
 
   expect_error(check_correct_datatype(exdata))
@@ -69,14 +69,14 @@ test_that("check y column is correct datatype", {
 # test get_unique_iterates
 test_that("get unique iterates", {
 
-  exdata <- salesdata::sales_monthly
+  exdata <- sales_monthly
   expected_res <- c("Article_A", "Article_B", "Article_C", "Article_D")
   expect_equal(get_unique_iterates(exdata), expected_res)
 })
 
 test_that("get subset", {
 
-  testdata <- salesdata::sales_monthly
+  testdata <- sales_monthly
   set.seed(10)
   expected_res <- "Article_C"
 
