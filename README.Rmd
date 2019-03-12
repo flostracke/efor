@@ -134,8 +134,7 @@ bind_rows(train_data_plot, test_data_plot) %>%
   facet_wrap(~iterate) +
   ggtitle("Forecasted values for each article") +
   ylab("Sales amount") +
-  theme_tq() +
-  scale_fill_viridis(option="magma")
+  theme_tq() 
 ```
 
 And we can plot the forecasts against the actual forecasts:
@@ -146,7 +145,7 @@ tf_plot_preds_actuals(forecasts, test_data)
 Add the distribtuion of the residuals:
 
 ```{r}
-tf_plot_residuals(test_data, forecasts)
+tf_plot_residuals(forecasts, test_data)
 ```
 
 

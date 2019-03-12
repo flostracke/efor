@@ -53,7 +53,7 @@ ggplot(sales_data, aes(x = date, y = y)) +
   geom_point() +
   facet_wrap(~iterate) +
   ggtitle("The original series") +
-  theme_tq()
+  theme_tq() 
 ```
 
 <img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
@@ -158,7 +158,7 @@ bind_rows(train_data_plot, test_data_plot) %>%
   facet_wrap(~iterate) +
   ggtitle("Forecasted values for each article") +
   ylab("Sales amount") +
-  theme_tq()
+  theme_tq() 
 ```
 
 <img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
@@ -170,3 +170,12 @@ tf_plot_preds_actuals(forecasts, test_data)
 ```
 
 <img src="man/figures/README-unnamed-chunk-10-1.png" width="100%" />
+
+Add the distribtuion of the residuals:
+
+``` r
+tf_plot_residuals(forecasts, test_data)
+#> `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+```
+
+<img src="man/figures/README-unnamed-chunk-11-1.png" width="100%" />
