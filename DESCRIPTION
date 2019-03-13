@@ -40,8 +40,6 @@ Suggests:
     testthat,
     covr,
     spelling
-Remotes:
-    flostracke/salesdata
 URL: https://github.com/flostracke/efor
 BugReports: https://github.com/flostracke/efor/issues
 Language: en-US
