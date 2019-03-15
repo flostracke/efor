@@ -107,7 +107,7 @@ choose_dtl_metric <- function(forecasts, testset, metric = "rmse") {
 
   metric_var <- rlang::enquo(metric)
 
-  dtl_metrics <- tf_calc_metrics(forecasts, testset, detailed = TRUE) %>%
+  dtl_metric <- tf_calc_metrics(forecasts, testset, detailed = TRUE) %>%
     dplyr::filter(metric == !!metric_var)
 
   return(dtl_metric)

@@ -68,7 +68,7 @@ forecasts_valid <- bind_rows(forecasts_ar, forecasts_prophet) %>%
   bind_rows(forecasts_tbats) %>%
   bind_rows(forecasts_ets)
 
-
+tf_get_best_method(forecasts_valid, select(valid_data,-key))
 
 # Erstelle nun Forecasts mit der jeweils besten methode:
 
