@@ -129,10 +129,10 @@ tf_get_best_method <- function(forecasts_valid, valid_set, metric = "rmse") {
   #resolve cases when it's not clear which is the best model
 
   models_row_numers <- forecasts_valid %>%
-    select(key) %>%
-    distinct() %>%
-    arrange(key) %>%
-    mutate(n = row_number())
+    dplyr::select(key) %>%
+    dplyr::distinct() %>%
+    dplyr::arrange(key) %>%
+    dplyr::mutate(n = row_number())
 
   #calculate the metric for all models and iterates
   dtl_metric <- choose_dtl_metric(forecasts_valid,valid_set, metric)
@@ -144,21 +144,21 @@ tf_get_best_method <- function(forecasts_valid, valid_set, metric = "rmse") {
 
   #get the info which produces the best forecast
   best_method <- best_metric %>%
-    inner_join(dtl_metric, by = c("iterate", "value")) %>%
-    select(iterate, key)
+    dplyr::inner_join(dtl_metric, by = c("iterate", "value")) %>%
+    dplyr::select(iterate, key)
 
   #add index of the model for choosing always the best model
   best_method <- best_method %>%
-    left_join(models_row_numers, by = "key")
+    dplyr::left_join(models_row_numers, by = "key")
 
   #get the list which model should be used for which article
   min_best_method <- best_method %>%
-    group_by(iterate) %>%
-    summarise(n = min(n))
+    dplyr::group_by(iterate) %>%
+    dplyr::summarise(n = min(n))
 
   #make the model / iterate combinaion unqiue
   final_best_method <- best_method %>%
-    inner_join(min_best_method, by = c("iterate", "n"))
+    dplyr::inner_join(min_best_method, by = c("iterate", "n"))
 
   return(final_best_method)
 
