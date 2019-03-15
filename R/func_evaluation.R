@@ -60,10 +60,7 @@ tf_calc_metrics <- function(df_forecasts, df_test, detailed = F) {
 tf_count_best_method <- function(forecasts, testset, metric = "rmse", plot = FALSE) {
 
 
-  metric_var <- rlang::enquo(metric)
-
-  dtl_metrics <- tf_calc_metrics(forecasts, testset, detailed = TRUE) %>%
-    dplyr::filter(metric == !!metric_var)
+  dtl_metrics <- choose_dtl_metric(forecasts, testset, metric)
 
   #get the minimum rmse for each iterate
   min_metrics <- dtl_metrics %>%
@@ -93,6 +90,79 @@ tf_count_best_method <- function(forecasts, testset, metric = "rmse", plot = FAL
   }
 }
 
+
+
+#' The functions calcualtes one specific metric for all iterates.
+#'
+#' @param forecasts The forecast dataframe
+#' @param testset The testset dataframe
+#' @param metric The metric which should be returned
+#'
+#' @return The calculated values for all iterates
+#' @export
+#'
+#' @examples
+#'
+choose_dtl_metric <- function(forecasts, testset, metric = "rmse") {
+
+  metric_var <- rlang::enquo(metric)
+
+  dtl_metrics <- tf_calc_metrics(forecasts, testset, detailed = TRUE) %>%
+    dplyr::filter(metric == !!metric_var)
+
+  return(dtl_metric)
+}
+
+#' Chooses the best method against a validation set from multiple forecasts
+#'
+#' @param forecasts_valid The forecasts against the validation set
+#' @param valid_set The validation set
+#' @param metric The metric which should be used for obtaining the bestmodel
+#'
+#' @return A dataframe
+#' @export
+#'
+#' @examples
+tf_get_best_method <- function(forecasts_valid, valid_set, metric = "rmse") {
+
+  #get list with all available models and apply a rank to them in order to
+  #resolve cases when it's not clear which is the best model
+
+  models_row_numers <- forecasts_valid %>%
+    select(key) %>%
+    distinct() %>%
+    arrange(key) %>%
+    mutate(n = row_number())
+
+  #calculate the metric for all models and iterates
+  dtl_metric <- choose_dtl_metric(forecasts_valid,valid_set, metric)
+
+  #get the best metric for each iterate
+  best_metric <- dtl_metric %>%
+    dplyr::group_by(iterate) %>%
+    dplyr::summarise(value = min(value))
+
+  #get the info which produces the best forecast
+  best_method <- best_metric %>%
+    inner_join(dtl_metric, by = c("iterate", "value")) %>%
+    select(iterate, key)
+
+  #add index of the model for choosing always the best model
+  best_method <- best_method %>%
+    left_join(models_row_numers, by = "key")
+
+  #get the list which model should be used for which article
+  min_best_method <- best_method %>%
+    group_by(iterate) %>%
+    summarise(n = min(n))
+
+  #make the model / iterate combinaion unqiue
+  final_best_method <- best_method %>%
+    inner_join(min_best_method, by = c("iterate", "n"))
+
+  return(final_best_method)
+
+}
 
 
 #' Plots the generated forecast against the actual values for each method. The
