@@ -68,7 +68,7 @@ forecasts_valid <- bind_rows(forecasts_ar, forecasts_prophet) %>%
   bind_rows(forecasts_tbats) %>%
   bind_rows(forecasts_ets)
 
-tf_get_best_method(forecasts_valid, select(valid_data,-key))
+best_method <- tf_get_best_method(forecasts_valid, select(valid_data,-key))
 
 # Erstelle nun Forecasts mit der jeweils besten methode:
 
@@ -117,4 +117,6 @@ forecasts_best <- best_method %>%
 forecasts_test <- forecasts_test %>%
   bind_rows(forecasts_best)
 
-tf_calc_metrics(forecasts_test, test_data)
+tf_calc_metrics(forecasts_test, select(test_data, -key))
+
+tf_plot_preds_actuals(forecasts_test, select(test_data, -key))
