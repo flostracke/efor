@@ -1,4 +1,4 @@
-# Functions for applying Boxcox transformations.
+# -- Functions for applying Boxcox transformations.
 
 # -- exported functions ----
 

@@ -1,5 +1,7 @@
 # Functions for applying and removing log transformation
 
+# external functions ----
+
 #' This functions applies a log transformation to multiple timeseries. There
 #' has to be column y in the dataset.
 #'
@@ -40,6 +42,7 @@ tf_log <- function(data, constant = 0.00001, ...) {
 #' @examples sales_monthly %>%
 #'            tf_log() %>%
 #'            tf_remove_log()
+#'
 tf_remove_log <- function(data, constant = 0.00001) {
 
   #check input data for correct structure
