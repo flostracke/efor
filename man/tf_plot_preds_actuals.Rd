@@ -16,3 +16,6 @@ tf_plot_preds_actuals(forecasts, test)
 Plots the generated forecast against the actual values for each method. The
 different forecast methods are grouped by a column "key".
 }
+\examples{
+tf_plot_preds_actuals(sales_forecast, sales_test)
+}

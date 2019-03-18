@@ -23,4 +23,5 @@ This function rempves
 sales_monthly \%>\%
            tf_log() \%>\%
            tf_remove_log()
+
 }

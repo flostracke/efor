@@ -21,3 +21,6 @@ The dataframe with the information how many times each method has been the best 
 \description{
 Counts how often each method is the best method against a testset.
 }
+\examples{
+tf_count_best_method(sales_forecast, sales_test, metric = "rmse", plot = FALSE)
+}

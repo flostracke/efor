@@ -14,3 +14,6 @@ tf_plot_residuals(forecasts, testset)
 \description{
 Plots the distribtuion of the residuals of each method
 }
+\examples{
+tf_plot_residuals(sales_forecast, sales_test)
+}

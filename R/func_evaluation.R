@@ -230,7 +230,7 @@ tf_plot_residuals <- function(forecasts, testset) {
 #'
 #' @return The calculated values for all iterates
 #'
-#' @examples
+#' @examples choose_dtl_metric(sales_forecast, sales_test, metric = "rmse")
 #'
 choose_dtl_metric <- function(forecasts, testset, metric = "rmse") {
 

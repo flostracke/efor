@@ -2,8 +2,6 @@
 
 export("%>%")
 export(check_input_data)
-export(choose_dtl_metric)
-export(forecast_and_sweep)
 export(get_subset)
 export(get_unique_iterates)
 export(tf_add_time_features)
