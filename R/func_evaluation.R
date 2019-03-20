@@ -82,7 +82,7 @@ tf_count_best_method <- function(forecasts, testset, metric = "rmse", plot = FAL
   if(plot == TRUE) {
 
     count_best_method %>%
-      ggplot2::ggplot(aes(reorder(key, n), n)) +
+      ggplot2::ggplot(ggplot2::aes(reorder(key, n), n)) +
       ggplot2::geom_bar(stat = "identity", fill = "steelblue") +
       ggplot2::coord_flip() +
       ggplot2::labs(
@@ -184,7 +184,7 @@ tf_plot_preds_actuals <- function(forecasts, test) {
   dplyr::left_join(forecasts, test, by = c("date", "iterate")) %>%
     dplyr::select(date, key, iterate, forecasts = y.x, actuals = y.y) %>%
     dplyr::left_join(rmse_labels, by = c("key")) %>%
-    ggplot2::ggplot(aes(actuals, forecasts)) +
+    ggplot2::ggplot(ggplot2::aes(actuals, forecasts)) +
     ggplot2::geom_point(alpha = 0.1) +
     ggplot2::facet_wrap(~new_label) +
     ggplot2::geom_abline(slope = 1L, intercept = 0L, size = 1.1, color = "#56B4E9") +
@@ -212,7 +212,7 @@ tf_plot_residuals <- function(forecasts, testset) {
     dplyr::select(date, key, iterate,  y_hat = y) %>%
     dplyr::inner_join(testset, by = c("date","iterate")) %>%
     dplyr::mutate(residuals = y - y_hat) %>%
-    ggplot2::ggplot(aes(x = residuals)) +
+    ggplot2::ggplot(ggplot2::aes(x = residuals)) +
     ggplot2::geom_histogram() +
     ggplot2::facet_wrap(~key) +
     tidyquant::theme_tq() +
