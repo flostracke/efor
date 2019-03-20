@@ -47,6 +47,30 @@ tf_calc_metrics <- function(df_forecasts, df_test, detailed = F) {
     dplyr::select(-.estimator) %>%
     dplyr::arrange(metric, value)
 
+  # TODO Refactor to own function
+  mase <- df_forecasts %>%
+    dplyr::select(date, key, iterate, y_hat = y) %>%
+    dplyr::inner_join(df_test, by = c("date", "iterate")) %>%
+    dplyr::group_by(!!!group) %>%
+    tidyr::nest() %>%
+    dplyr::mutate(
+      metrics = purrr::map(
+        data,
+        ~yardstick::mase(
+          data = .x,
+          truth = y,
+          estimate = y_hat
+        )
+      )
+    ) %>%
+    tidyr::unnest(metrics) %>%
+    dplyr::rename( metric = .metric, value = .estimate) %>%
+    dplyr::select(-.estimator, -data) %>%
+    dplyr::arrange(metric, value)
+
+  metrics <- metrics %>%
+    dplyr::bind_rows(mase)
+
   return(metrics)
 }
 
