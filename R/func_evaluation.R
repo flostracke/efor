@@ -175,7 +175,7 @@ tf_plot_preds_actuals <- function(forecasts, test) {
     dplyr::mutate(rmse = stringr::str_c(rmse, ")")) %>%
     dplyr::mutate(new_label = stringr::str_c(key, rmse)) %>%
     #reorder factors for plotting ascending rmse
-    dplyr::mutate(new_label = forcasts::as_factor(new_label)) %>%
+    dplyr::mutate(new_label = forcats::as_factor(new_label)) %>%
     dplyr::mutate(new_label = forcats::fct_reorder(new_label, rmse_order)) %>%
     dplyr::select(-rmse, -rmse_order)
 
