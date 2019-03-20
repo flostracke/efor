@@ -89,8 +89,7 @@ tf_count_best_method <- function(forecasts, testset, metric = "rmse", plot = FAL
         title = "How often is each method the best forecast?",
         x = "used forecasting method",
         y = "# is the best method"
-      ) +
-      tidyquant::theme_tq()
+      )
 
   } else {
     return(count_best_method)
@@ -192,8 +191,7 @@ tf_plot_preds_actuals <- function(forecasts, test) {
     ggplot2::labs(
       title = "Forecasts vs Actuals",
       subtitle = "per used method with RMSE"
-    ) +
-    tidyquant::theme_tq()
+    )
 }
 
 
@@ -214,8 +212,7 @@ tf_plot_residuals <- function(forecasts, testset) {
     dplyr::mutate(residuals = y - y_hat) %>%
     ggplot2::ggplot(ggplot2::aes(x = residuals)) +
     ggplot2::geom_histogram() +
-    ggplot2::facet_wrap(~key) +
-    tidyquant::theme_tq() +
+    ggplot2::facet_wrap(~key)
     ggplot2::geom_rug(alpha = 0.2)
 }
 
