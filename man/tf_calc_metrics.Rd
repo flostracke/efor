@@ -20,3 +20,7 @@ The calculated rmse for each method.
 This function calculates the rmse for all contained forecasts in a dataframe.
 The different models have to be seperated with the help of the key column.
 }
+\examples{
+tf_calc_metrics(sales_forecast, sales_test)
+
+}

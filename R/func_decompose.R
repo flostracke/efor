@@ -1,5 +1,7 @@
 # -- Functions for decomposition
 
+# -- externall functions ----
+
 #' Function calls anomalize::time_decompose() internal and decomposes all
 #' series in the tibble
 #'

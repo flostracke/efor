@@ -19,6 +19,3 @@ The calculated values for all iterates
 \description{
 The functions calcualtes one specific metric for all iterates.
 }
-\examples{
-
-}

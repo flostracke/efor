@@ -33,7 +33,6 @@ Imports:
     tidyr,
     yardstick,
     stats,
-    tidyquant,
     ggplot2,
     forcats
 Suggests:

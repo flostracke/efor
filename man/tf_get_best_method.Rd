@@ -19,3 +19,6 @@ A dataframe
 \description{
 Chooses the best method against a validation set from multiple forecasts
 }
+\examples{
+tf_get_best_method(sales_forecast, sales_test, metric = "rmse")
+}
