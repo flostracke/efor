@@ -21,7 +21,7 @@ tf_clean_ts <- function(data, freq, ...) {
 
   data %>%
     #cast to ts object
-    timetk::tk_ts(start = tf_start_date(.), frequency = freq, silent = T) %>%
+    timetk::tk_ts(start = tf_start_date(., freq), frequency = freq, silent = T) %>%
     forecast::tsclean(...) %>%
     # make negative observations positive
     abs() %>%
@@ -48,14 +48,16 @@ tf_clean_ts <- function(data, freq, ...) {
 #'
 #' @return Returns the cleaned dataframe
 #'
-tf_clean_grouped_ts <- function(data, parallel = T, ...) {
+tf_clean_grouped_ts <- function(data, parallel = T, freq = 12, ...) {
 
   # create a plan for future execution
   create_plan(parallel)
 
   data %>%
     split(.$iterate) %>%
-    furrr::future_map(tf_clean_ts, .progress = T, ...) %>%
+    furrr::future_map(tf_clean_ts, .progress = T, freq, ...) %>%
     dplyr::bind_rows()
 
 }
+
+
