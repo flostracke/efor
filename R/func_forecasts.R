@@ -41,7 +41,8 @@ tf_forecast <- function(data, n_pred, func, freq, ...) {
       # add iterate column
       mutate(iterate = current_iterate) %>%
       # add name of forecasting method
-      mutate(key = name)
+      mutate(key = name) %>%
+      select(date, iterate, key, y, y_lo.95, y_hi.95)
 
     return(preds)
   }
