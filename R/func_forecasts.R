@@ -179,7 +179,14 @@ forecast_and_sweep <- function(mod, n_pred) {
     sweep::sw_sweep(fitted = F, rename_index = "date") %>%
     # filter out the history of the series
     dplyr::filter(key != "actual") %>%
-    dplyr::select(date, key, y)
+    dplyr::select(date, key, y) %>%
+    dplyr::select(
+      date,
+      key,
+      y,
+      y_lo.95 = lo.95,
+      y_hi.95 = hi.95
+    )
   return(forecast)
 }
 
