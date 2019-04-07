@@ -25,23 +25,33 @@
 
 tf_forecast <- function(data, n_pred, func, freq, ...) {
 
+  # get the name of the used function
   name <- find_original_name(func)
 
+  # Forecasts with the prophet model:
   if (name == "prophet") {
+
     preds <- tf_prophet(data, n_pred, freq,  ...)
 
     return(preds)
 
   } else {
+    # Forecasts from the forecast package
+
+    # Create the model object
     mod <- tf_create_model(data, func, freq, ...)
 
+    #save the current iterate to a string
     current_iterate <- unique(data$iterate)
 
-    preds <- build_forecasts(mod, n_pred, freq) %>%
+    preds <-
+      # create the forecasts with the trained model
+      build_forecasts(mod, n_pred, freq) %>%
       # add iterate column
       mutate(iterate = current_iterate) %>%
       # add name of forecasting method
       mutate(key = name) %>%
+      #select columns for output with predictions intervals
       select(date, iterate, key, y, y_lo.95, y_hi.95)
 
     return(preds)
