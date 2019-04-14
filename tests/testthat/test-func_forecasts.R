@@ -5,7 +5,7 @@ context("test-func_forecasts")
 test_that("Forecasting produces correct number of results for each article", {
 
   library(furrr)
-  library(tidyverse)
+  library(dplyr)
 
   #get the number of expected forecasts in the result
   forecast_horizon <- 3L
@@ -48,7 +48,7 @@ test_that("Forecasting produces correct number of results for each article", {
 test_that("Prophet produces correct number of results for each article", {
 
   library(furrr)
-  library(tidyverse)
+  library(dplyr)
   library(prophet)
 
   #get the number of expected forecasts in the result
