@@ -5,10 +5,15 @@ context("test-func_forecasts")
 test_that("Forecasting produces correct number of results for each article", {
 
   library(furrr)
-  library(tidyverse)
+  library(dplyr)
 
+  #get the number of expected forecasts in the result
   forecast_horizon <- 3L
-  nr_articles <- sales_monthly %>% get_unique_iterates() %>% length()
+
+  #get the number of expected articles
+  nr_articles <- sales_monthly %>%
+    get_unique_iterates() %>%
+    length()
 
   #List with the number of to be produced forecasts and the number of articles
   expected_result <- list(forecast_horizon, nr_articles)
@@ -18,6 +23,7 @@ test_that("Forecasting produces correct number of results for each article", {
     sales_monthly,
     n_pred = forecast_horizon,
     forecast::auto.arima,
+    freq = 12,
     parallel = FALSE
   )
 
@@ -25,7 +31,6 @@ test_that("Forecasting produces correct number of results for each article", {
   nr_articles_forecast <- forecasts %>%
     get_unique_iterates() %>%
     length()
-
   #get the number of the produced forecast
   nr_produced_forecasts <- forecasts %>%
     count(iterate) %>%
