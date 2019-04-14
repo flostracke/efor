@@ -40,7 +40,7 @@ tf_prophet <- function(data, n_pred, freq, ...) {
   forecast <- stats::predict(mod_prophet, future) %>%
     dplyr::mutate(key = "prophet",
                   iterate = current_iterate) %>%
-    dplyr::select(date = ds, key, y = yhat, iterate) %>%
+    dplyr::select(date = ds, iterate, key, y = yhat, y_lo.95 = yhat_lower, y_hi.95 = yhat_upper) %>%
     tibble::as_tibble() %>%
     dplyr::mutate(date = as.Date(date))
 

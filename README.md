@@ -9,11 +9,11 @@ status](https://codecov.io/gh/flostracke/efor/branch/master/graph/badge.svg)](ht
 
 # efor
 
-The goal of efor is to make it easier if you have to forecast or apply
-preprocessing to multiple timeseries. Furthermore the the package
-supports in transforming timeseries data for applying machine learning
-or deeplearning to it. (Creation of lagged values, boxcox
-transformation)
+The goal of EasyFORcasting or short efor is to make it easier if you
+have to forecast or apply preprocessing to multiple timeseries.
+Furthermore the the package supports in transforming timeseries data for
+applying machine learning or deeplearning to it. (Creation of lagged
+values)
 
 ## Installation
 
@@ -29,7 +29,6 @@ First we load some packages for this example.
 
 ``` r
 
-library(salesdata) # devtools::install_github("flostracke/salesdata"). Some example data
 library(tidyverse)
 library(efor)
 library(furrr) # for running the forecasting in parallel
@@ -45,6 +44,17 @@ for all these articles. The efor package makes this quite easy, because
 it provides functionality to create forecasts for multiple articles with
 one line of code. Right now you can use the forecast package or the
 prophet package.
+
+The idea is that all the data has to be organised in one dataframe with
+the following columns:
+
+  - date: The date: Right now it’s possible to use daily and monthly
+    data.
+  - iterate: the grouping variable. In this example it is the
+    articlenumber
+  - y: the value you want to forecast
+
+<!-- end list -->
 
 ``` r
 
@@ -71,14 +81,16 @@ test_data <- sales_data %>%
 ```
 
 Now we can apply the the auto.arima function to the dataset and create
-the forecasts.
+the forecasts. All the methods from the forecast package can be run in
+parallel.
 
 ``` r
 forecasts_ar <- tf_grouped_forecasts(
-  train_data, # used training dataset
-  n_pred = 4, # number of predictions
+  train_data,        # used training dataset
+  n_pred = 4,        # number of predictions
   func = auto.arima, # used forecasting method
-  freq = 12 # Frequency. 12 for monthly data, 1 for daily data
+  freq = 12,         # Frequency. 12 for monthly data, 1 for daily data,
+  parallel = TRUE    # for runiing in parallel
 )
 ```
 
@@ -88,11 +100,11 @@ prophet, because there is some bug right now.
 
 ``` r
 forecasts_prophet <- tf_grouped_forecasts(
-  train_data, # used training dataset
-  n_pred = 4, # number of predictions
-  func = prophet, # used forecasting method
-  freq = 12, # Frequency. 12 for monthly data, 1 for daily data
-  parallel = FALSE
+  train_data,      # used training dataset
+  n_pred = 4,      # number of predictions
+  func = prophet,  # used forecasting method
+  freq = 12,       # Frequency. 12 for monthly data, 1 for daily data
+  parallel = FALSE #disabling parallel for prohet
 )
 ```
 
@@ -163,19 +175,106 @@ bind_rows(train_data_plot, test_data_plot) %>%
 
 <img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
 
-And we can plot the forecasts against the actual forecasts:
+## Other included stuff
+
+There are couple of further things involded in the package, which make
+applying techniques to multiple timeseries easier.
+
+### Decomposition
+
+There are functions for splitting timeseries in trend, seasonality and
+noise
 
 ``` r
-tf_plot_preds_actuals(forecasts, test_data)
+tf_decompose(train_data)
+#> frequency = 12 months
+#> trend = 24 months
+#> frequency = 12 months
+#> trend = 24 months
+#> frequency = 12 months
+#> trend = 24 months
+#> frequency = 12 months
+#> trend = 24 months
+#> # A tibble: 192 x 6
+#>    date           y iterate   season trend remainder
+#>    <date>     <dbl> <chr>      <dbl> <dbl>     <dbl>
+#>  1 2012-01-01  1179 Article_A  799.   271.    109.  
+#>  2 2012-02-01   516 Article_A  208.   270.     37.8 
+#>  3 2012-03-01   381 Article_A  132.   269.    -19.2 
+#>  4 2012-04-01   171 Article_A  -15.7  267.    -80.8 
+#>  5 2012-05-01   264 Article_A  -15.4  266.     13.0 
+#>  6 2012-06-01   135 Article_A -110.   265.    -20.3 
+#>  7 2012-07-01   225 Article_A  -44.4  264.      4.93
+#>  8 2012-08-01    66 Article_A -183.   264.    -15.0 
+#>  9 2012-09-01   123 Article_A -107.   263.    -32.3 
+#> 10 2012-10-01    54 Article_A -189.   262.    -18.3 
+#> # ... with 182 more rows
 ```
 
-<img src="man/figures/README-unnamed-chunk-10-1.png" width="100%" />
+### Transformations and cleaning
 
-Add the distribtuion of the residuals:
+There are a couple of transformations possible (BoxCox, and
+forecast::tsclean)
+
+#### BoxCox
+
+First we get the lambda for each timeseries
 
 ``` r
-tf_plot_residuals(forecasts, test_data)
-#> `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+lambdas <- tf_get_lambdas(train_data)
+
+lambdas
+#> # A tibble: 4 x 2
+#>   iterate    lambda
+#>   <chr>       <dbl>
+#> 1 Article_A  0.0804
+#> 2 Article_B  0.322 
+#> 3 Article_C -0.182 
+#> 4 Article_D  0.0127
 ```
 
-<img src="man/figures/README-unnamed-chunk-11-1.png" width="100%" />
+Apply the BoxCox transformation with the calculated lambdas:
+
+``` r
+train_data_boxcox <- tf_boxcox(train_data)
+```
+
+Quick plot of the boxcox transformed series:
+
+``` r
+ggplot(train_data_boxcox, aes(x = date, y = y)) +
+  geom_line() +
+  geom_point() +
+  facet_wrap(~iterate) +
+  ggtitle("The boxcox transformed series") +
+  theme_tq()
+```
+
+<img src="man/figures/README-unnamed-chunk-13-1.png" width="100%" />
+
+Afterwards it’s possible to remove the boxcox transformation:
+
+``` r
+tf_remove_boxcox(train_data_boxcox, lambdas)
+#> # A tibble: 192 x 3
+#>    date            y iterate  
+#>    <date>      <dbl> <chr>    
+#>  1 2012-01-01 1179.  Article_A
+#>  2 2012-02-01  516.  Article_A
+#>  3 2012-03-01  381   Article_A
+#>  4 2012-04-01  171.  Article_A
+#>  5 2012-05-01  264.  Article_A
+#>  6 2012-06-01  135.  Article_A
+#>  7 2012-07-01  225.  Article_A
+#>  8 2012-08-01   66.0 Article_A
+#>  9 2012-09-01  123.  Article_A
+#> 10 2012-10-01   54.0 Article_A
+#> # ... with 182 more rows
+```
+
+  - There are functions for preparing timeseries for regression tasks
+  - there is a function for applying a gridsearch for prophet models
+
+## Next Steps
+
+  - add a function for handling outliers via the anomalize package
