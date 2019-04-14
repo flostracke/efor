@@ -34,7 +34,8 @@ Imports:
     yardstick,
     stats,
     ggplot2,
-    forcats
+    forcats,
+    prophet
 Suggests:
     testthat,
     covr,
