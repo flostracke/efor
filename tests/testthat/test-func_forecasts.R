@@ -7,8 +7,13 @@ test_that("Forecasting produces correct number of results for each article", {
   library(furrr)
   library(tidyverse)
 
+  #get the number of expected forecasts in the result
   forecast_horizon <- 3L
-  nr_articles <- sales_monthly %>% get_unique_iterates() %>% length()
+
+  #get the number of expected articles
+  nr_articles <- sales_monthly %>%
+    get_unique_iterates() %>%
+    length()
 
   #List with the number of to be produced forecasts and the number of articles
   expected_result <- list(forecast_horizon, nr_articles)
@@ -46,8 +51,13 @@ test_that("Prophet produces correct number of results for each article", {
   library(tidyverse)
   library(prophet)
 
+  #get the number of expected forecasts in the result
   forecast_horizon <- 3L
-  nr_articles <- sales_monthly %>% get_unique_iterates() %>% length()
+
+  #get the number of expected articles
+  nr_articles <- sales_monthly %>%
+    get_unique_iterates() %>%
+    length()
 
   #List with the number of to be produced forecasts and the number of articles
   expected_result <- list(forecast_horizon, nr_articles)
