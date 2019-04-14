@@ -16,14 +16,13 @@
 #' @param data The dataframe containing the timeseries.
 #' @param n_pred The forecast horizon.
 #' @param func The used forecast method.
-#' @param freq The used frequence. 1 for daily data and 12 for monthly data.
 #' @param ... More arguments specific to the used forecasting method.
 #'
 #' @export
 #'
 #' @return The forecasted values for the series
 
-tf_forecast <- function(data, n_pred, func, freq, ...) {
+tf_forecast <- function(data, n_pred, func, ...) {
 
   # get the name of the used function
   name <- find_original_name(func)
@@ -31,31 +30,18 @@ tf_forecast <- function(data, n_pred, func, freq, ...) {
   # Forecasts with the prophet model:
   if (name == "prophet") {
 
-    preds <- tf_prophet(data, n_pred, freq,  ...)
+    preds <- forecasts_prophet(data, n_pred,  ...)
 
-    return(preds)
 
   } else {
-    # Forecasts from the forecast package
+  # Forecasts from the forecast package
 
-    # Create the model object
-    mod <- tf_create_model(data, func, freq, ...)
 
-    #save the current iterate to a string
-    current_iterate <- unique(data$iterate)
+    preds <- forecasts_timeseries(data, n_pred = n_pred, func = func, name = name)
 
-    preds <-
-      # create the forecasts with the trained model
-      build_forecasts(mod, n_pred, freq) %>%
-      # add iterate column
-      mutate(iterate = current_iterate) %>%
-      # add name of forecasting method
-      mutate(key = name) %>%
-      #select columns for output with predictions intervals
-      select(date, iterate, key, y, y_lo.95, y_hi.95)
-
-    return(preds)
   }
+
+  return(preds)
 }
 
 #' Creates forecast for a dateframe with mutlitple timeseries separted by the
@@ -77,14 +63,13 @@ tf_forecast <- function(data, n_pred, func, freq, ...) {
 #' @param data The dataframe containing the timeseries.
 #' @param n_pred The forecast horizon.
 #' @param func The used forecast method.
-#' @param freq The used frequency. 1 for daily data and 12 for monthly data.
 #' @param parallel Specifies if the forecasts are created in parallel.
 #' @param ... More arguments specific to the used forecasting method.
 #'
 #' @export
 #'
 #' @return The forecasted values for the dataset.
-tf_grouped_forecasts <- function(data, n_pred, func, freq, parallel = T, ...) {
+tf_grouped_forecasts <- function(data, n_pred, func, parallel = T, ...) {
 
   create_plan()
 
@@ -92,12 +77,12 @@ tf_grouped_forecasts <- function(data, n_pred, func, freq, parallel = T, ...) {
     # Prophet funktioniert nicht mit future map.. nur purr map nutzen!
     data %>%
       split(.$iterate) %>%
-      purrr::map(tf_forecast, n_pred, func, freq, ...) %>%
+      purrr::map(tf_forecast, n_pred, func, ...) %>%
       dplyr::bind_rows()
   } else {
     data %>%
       split(.$iterate) %>%
-      furrr::future_map(tf_forecast, n_pred, func, freq, ...) %>%
+      furrr::future_map(tf_forecast, n_pred, func, ...) %>%
       dplyr::bind_rows()
   }
 
@@ -139,44 +124,6 @@ tf_mean_forecast <- function(data, h) {
 
 # -- internal functions ----
 
-#' Builds forecasts with the trained model.
-#'
-#' @param mod The trained model.
-#' @param n_pred The number of predictions
-#' @param freq The frequency. Currently only daily data (1) and monthly data (12).
-#'             are supported.
-#'
-#' @return The predictions with nice date representations
-#'
-#' @examples
-build_forecasts <- function(mod, n_pred, freq) {
-
-  # Create the forecast
-  preds <- forecast_and_sweep(mod, n_pred)
-
-  # now we have to rebuild a nice time representation
-
-  # Create Forecasts for Monthly data
-  if(freq == 12) {
-    preds <- preds %>%
-      dplyr::mutate(date = tf_yearmon_to_date(date))
-
-  } else {
-
-    # save the original timetk index from the model
-    index <- timetk::tk_index(mod, timetk_idx = T)
-
-    # build the dates which should be forecasted
-    future_dates <- timetk::tk_make_future_timeseries(index, n_pred)
-
-    preds <- preds %>%
-      dplyr::mutate(date = future_dates)
-
-  }
-
-  return(preds)
-}
-
 #' Actually calls the forecast functions and applies sweep to the result.
 #'
 #' @param mod The pretrained model.
@@ -185,7 +132,14 @@ build_forecasts <- function(mod, n_pred, freq) {
 #' @return The produced forecast. The date column has to be corrected.
 #'
 #' @examples
-forecast_and_sweep <- function(mod, n_pred) {
+create_forecast <- function(data, mod, n_pred) {
+
+  #save the current iterate to a string
+  current_iterate <- unique(data$iterate)
+
+  # get a vector with the dates for which the forecasts should be created
+  forecasted_dates <- create_forecasting_dates(data, n_pred)
+
   forecast <- forecast::forecast(mod, n_pred) %>%
     sweep::sw_sweep(fitted = F, rename_index = "date") %>%
     # filter out the history of the series
@@ -193,11 +147,35 @@ forecast_and_sweep <- function(mod, n_pred) {
     dplyr::select(
       date,
       key,
-      y,
+      y = value,
       y_lo.95 = lo.95,
       y_hi.95 = hi.95
-    )
+    ) %>%
+    dplyr::mutate(
+      date = forecasted_dates,
+      iterate = current_iterate
+    ) %>%
+    #prevents hw from producing too many forecasts
+    head(n_pred)
+
   return(forecast)
+}
+
+#' Creates a vector with the dates for which the forecasts should be created
+#'
+#' @param data The original dataset
+#' @param n_pred number of the forecasts that should be produced
+#'
+#' @return The vector with the dates of the forecast horizon
+#'
+#' @examples
+create_forecasting_dates <- function(data, n_pred) {
+
+  data %>%
+    tsibble::as_tsibble(index = date) %>%
+    tsibble::append_case(n_pred) %>%
+    tail(n_pred) %>%
+    dplyr::pull(date)
 }
 
 #' Creates models based on ts objects.
@@ -213,29 +191,46 @@ forecast_and_sweep <- function(mod, n_pred) {
 #'
 #' @param data The dataframe containing the timeseries.
 #' @param func The used forecast method.
-#' @param freq The used frequence. 1 for daily data and 12 for monthly data.
 #' @param ... More arguments specific to the used forecasting method.
 #'
 #' @return The fitted model for the specified method.
 
-tf_create_model <- function(data, func, freq, ...) {
+tf_create_model <- function(data, func, ...) {
 
-  # get the start date for timetk depending on daily or monthly data
-  start_date <- tf_start_date(data, freq)
-
-
-  # Coerce the dataframe to a ts object
   ts_data <- data %>%
-    timetk::tk_ts(start = start_date,
-                  frequency = freq,
-                  select = y,
-                  silent = T
-                  )
+    as_ts()
 
   # Construct the model object with additional parameters
   mod <- func(ts_data, ...)
 
   return(mod)
+}
+
+#' Wrapper function for forecasts from the forecast package
+#'
+#' @param data The dataset with all the articles
+#' @param func The used forecast function
+#' @param n_pred Number of the produced forecasts
+#' @param ... FUrther arguments which should be passed to the forecast function
+#'
+#' @return The produced forecasts
+#'
+#' @examples
+forecasts_timeseries <- function(data, func, n_pred, name, ...) {
+
+  # Create the model object
+  mod <- tf_create_model(data, func, ...)
+
+
+  preds <-
+    # create the forecasts with the trained model
+    create_forecast(data, mod, n_pred) %>%
+    # add name of forecasting method
+    dplyr::mutate(key = name) %>%
+    #select columns for output with predictions intervals
+    dplyr::select(date, iterate, key, y, y_lo.95, y_hi.95)
+
+  return(preds)
 }
 
 

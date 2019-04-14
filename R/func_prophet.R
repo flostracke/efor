@@ -15,16 +15,12 @@
 #' @export
 #'
 #' @return The forecasted values for the series
-tf_prophet <- function(data, n_pred, freq, ...) {
+forecasts_prophet <- function(data, n_pred, freq, ...) {
 
-  # Set frequency for prophet
-  if(freq == "12") {
-    used_freq <- "m"
-  } else {
-    used_freq <- "d"
-  }
 
-  current_iterate = unique(data$iterate)
+
+
+  future_dates <- tibble(ds = create_forecasting_dates(data, n_pred))
 
   data <- data %>%
     dplyr::rename(ds = date) %>%
@@ -32,16 +28,19 @@ tf_prophet <- function(data, n_pred, freq, ...) {
 
   mod_prophet <- prophet::prophet(data, interval.width = 0.95, ...)
 
-  future <- prophet::make_future_dataframe(mod_prophet,
-                                           periods = n_pred,
-                                           freq = used_freq,
-                                           include_history = FALSE)
 
-  forecast <- stats::predict(mod_prophet, future) %>%
-    dplyr::mutate(key = "prophet",
-                  iterate = current_iterate) %>%
-    dplyr::select(date = ds, iterate, key, y = yhat, y_lo.95 = yhat_lower, y_hi.95 = yhat_upper) %>%
-    tibble::as_tibble() %>%
+  forecast <- stats::predict(mod_prophet, future_dates) %>%
+    dplyr::mutate(
+      key = "prophet",
+      iterate = current_iterate
+    ) %>%
+    dplyr::select(
+      date = ds,
+      iterate, key,
+      y = yhat,
+      y_lo_95 = yhat_lower,
+      y_hi_95 = yhat_upper
+    ) %>%
     dplyr::mutate(date = as.Date(date))
 
   return(forecast)

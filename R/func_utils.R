@@ -23,6 +23,14 @@ get_unique_iterates <- function(data) {
     dplyr::pull()
 }
 
+as_ts <- function(x) {
+
+  x %>%
+    tsbox::ts_xts() %>%
+    tsbox::ts_ts()
+
+}
+
 # -- Gets a subet of n iterates of the dataset
 
 #' Gets a subet of n iterates of the dataset

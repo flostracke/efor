@@ -4,14 +4,12 @@
 \alias{tf_create_model}
 \title{Creates models based on ts objects.}
 \usage{
-tf_create_model(data, func, freq, ...)
+tf_create_model(data, func, ...)
 }
 \arguments{
 \item{data}{The dataframe containing the timeseries.}
 
 \item{func}{The used forecast method.}
-
-\item{freq}{The used frequence. 1 for daily data and 12 for monthly data.}
 
 \item{...}{More arguments specific to the used forecasting method.}
 }

@@ -4,7 +4,7 @@
 \alias{tf_clean_grouped_ts}
 \title{TSCLEAN for multiple articles}
 \usage{
-tf_clean_grouped_ts(data, parallel = T, ...)
+tf_clean_grouped_ts(data, parallel = T, freq = 12, ...)
 }
 \arguments{
 \item{data}{The dataframe with the timeseries}

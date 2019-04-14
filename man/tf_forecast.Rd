@@ -4,7 +4,7 @@
 \alias{tf_forecast}
 \title{Creates forecast for a dateframe.}
 \usage{
-tf_forecast(data, n_pred, func, freq, ...)
+tf_forecast(data, n_pred, func, ...)
 }
 \arguments{
 \item{data}{The dataframe containing the timeseries.}
@@ -12,8 +12,6 @@ tf_forecast(data, n_pred, func, freq, ...)
 \item{n_pred}{The forecast horizon.}
 
 \item{func}{The used forecast method.}
-
-\item{freq}{The used frequence. 1 for daily data and 12 for monthly data.}
 
 \item{...}{More arguments specific to the used forecasting method.}
 }
