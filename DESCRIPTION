@@ -33,7 +33,9 @@ Imports:
     ggplot2,
     forcats,
     tsibble,
-    tsbox
+    tsbox,
+    anomalize,
+    tibbletime
 Suggests:
     testthat,
     covr,
