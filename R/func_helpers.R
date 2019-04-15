@@ -1,11 +1,6 @@
-# Helper Funktion, die ein Forecast DF erzeugt.
-create_final_forecast_df <- function(v_forecasts, df_test, name) {
-  df_test %>% dplyr::select(-y) %>% dplyr::mutate(
-    y = v_forecasts,
-    key = name
-  )
-}
+# -- Different helper functions
 
+# -- external functions ----
 
 #' Function creates a dataframe with the forecasts. The forecasts will be
 #' combined with the testset.
@@ -19,17 +14,35 @@ create_final_forecast_df <- function(v_forecasts, df_test, name) {
 #' @export
 #'
 #' @examples
+#'
 tf_build_forecast <- function(v_forecasts, df_test, name) {
+
+  #Case numeric vector
   if (class(v_forecasts)[1] == "numeric") {
+
     create_final_forecast_df(v_forecasts, df_test, name)
   }
+
+  #Case mlr prediction object
   else {
+
     v_mlr_pred <- v_forecasts$data %>%
       tibble::as_tibble() %>%
       dplyr::select(-truth, y = response) %>%
       pull()
+
     create_final_forecast_df(v_mlr_pred, df_test, name)
   }
+}
+
+# -- internal functions ----
+
+# Helper Funktion, die ein Forecast DF erzeugt.
+create_final_forecast_df <- function(v_forecasts, df_test, name) {
+  df_test %>% dplyr::select(-y) %>% dplyr::mutate(
+    y = v_forecasts,
+    key = name
+  )
 }
 
 
