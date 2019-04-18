@@ -17,19 +17,18 @@
 #' @return The forecasted values for the series
 forecasts_prophet <- function(data, n_pred, freq, ...) {
 
-
-
-
   future_dates <- tibble(ds = create_forecasting_dates(data, n_pred))
 
+  current_iterate <- unique(data$iterate)
+
   data <- data %>%
-    dplyr::rename(ds = date) %>%
-    dplyr::select(ds, y)
+    #bring the current dataframe to the structure for prophet
+    dplyr::select(ds = date, y)
 
   mod_prophet <- prophet::prophet(data, interval.width = 0.95, ...)
 
 
-  forecast <- stats::predict(mod_prophet, future_dates) %>%
+  forecast <- suppressWarnings(stats::predict(mod_prophet, future_dates)) %>%
     dplyr::mutate(
       key = "prophet",
       iterate = current_iterate
@@ -41,7 +40,8 @@ forecasts_prophet <- function(data, n_pred, freq, ...) {
       y_lo_95 = yhat_lower,
       y_hi_95 = yhat_upper
     ) %>%
-    dplyr::mutate(date = as.Date(date))
+    mutate(date = dplyr::pull(future_dates))
+
 
   return(forecast)
 }
