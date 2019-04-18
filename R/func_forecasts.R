@@ -143,7 +143,7 @@ create_forecast <- function(data, mod, n_pred) {
   forecast <- forecast::forecast(mod, n_pred) %>%
     sweep::sw_sweep(fitted = F, rename_index = "date") %>%
     # filter out the history of the series
-    dplyr::filter(key != "actual") %>%
+    dplyr::filter(key == "forecast") %>%
     dplyr::select(
       date,
       key,
@@ -172,8 +172,7 @@ create_forecast <- function(data, mod, n_pred) {
 create_forecasting_dates <- function(data, n_pred) {
 
   data %>%
-    tsibble::as_tsibble(index = date) %>%
-    tsibble::append_case(n_pred) %>%
+    tsibble::append_row(n = n_pred) %>%
     tail(n_pred) %>%
     dplyr::pull(date)
 }
@@ -198,7 +197,7 @@ create_forecasting_dates <- function(data, n_pred) {
 tf_create_model <- function(data, func, ...) {
 
   ts_data <- data %>%
-    as_ts()
+   as.ts()
 
   # Construct the model object with additional parameters
   mod <- func(ts_data, ...)

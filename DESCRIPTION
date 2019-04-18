@@ -33,7 +33,6 @@ Imports:
     ggplot2,
     forcats,
     tsibble,
-    tsbox,
     anomalize,
     tibbletime
 Suggests:

@@ -6,9 +6,21 @@ test_that("Forecasting produces correct number of results for each article", {
 
   library(furrr)
   library(dplyr)
+  library(tsibble)
 
   #get the number of expected forecasts in the result
   forecast_horizon <- 3L
+
+  sales_monthly <- sales_monthly %>%
+    mutate(date = yearmonth(date)) %>%
+    as_tsibble(
+      key = id(iterate),
+      index = date
+    )
+
+  sales_monthly %>%
+    filter(iterate == "Article_A") %>%
+    as.ts()
 
   #get the number of expected articles
   nr_articles <- sales_monthly %>%
