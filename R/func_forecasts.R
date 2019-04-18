@@ -150,10 +150,14 @@ create_forecast <- function(data, mod, n_pred) {
   # get a vector with the dates for which the forecasts should be created
   forecasted_dates <- create_forecasting_dates(data, n_pred)
 
-  forecast <- forecast::forecast(mod, n_pred) %>%
+  forecast <-
+    # produce the forecats with the passed model object
+    forecast::forecast(mod, n_pred) %>%
+    # clean the forecasts for the final output
     sweep::sw_sweep(fitted = F, rename_index = "date") %>%
     # filter out the history of the series
     dplyr::filter(key == "forecast") %>%
+    # keep only specific interval information
     dplyr::select(
       date,
       key,
@@ -161,6 +165,8 @@ create_forecast <- function(data, mod, n_pred) {
       y_lo.95 = lo.95,
       y_hi.95 = hi.95
     ) %>%
+    # replace the future dates with a nice representation and add the
+    # information for the current iterate
     dplyr::mutate(
       date = forecasted_dates,
       iterate = current_iterate
@@ -168,6 +174,7 @@ create_forecast <- function(data, mod, n_pred) {
     #prevents hw from producing too many forecasts
     head(n_pred)
 
+  # returns the dataframe with the forecasts for the current iterate
   return(forecast)
 }
 
@@ -206,12 +213,15 @@ create_forecasting_dates <- function(data, n_pred) {
 
 tf_create_model <- function(data, func, ...) {
 
+  # convert a single tsibble timeseries to a ts object for passing to the methods
+  # from the forecast package
   ts_data <- data %>%
    as.ts()
 
   # Construct the model object with additional parameters
   mod <- func(ts_data, ...)
 
+  #return the trained model
   return(mod)
 }
 

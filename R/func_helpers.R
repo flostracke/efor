@@ -39,16 +39,18 @@ tf_build_forecast <- function(v_forecasts, df_test, name) {
 
 # Helper Funktion, die ein Forecast DF erzeugt.
 create_final_forecast_df <- function(v_forecasts, df_test, name) {
-  df_test %>% dplyr::select(-y) %>% dplyr::mutate(
-    y = v_forecasts,
-    key = name
-  )
+  df_test %>%
+    dplyr::select(-y) %>%
+    dplyr::mutate(
+      y = v_forecasts,
+      key = name
+    )
 }
 
 
 # Function returns the the Start Time of a Series for the tk_ts function
 
-tf_start_date <- function(data, freq) {
+dec_tf_start_date <- function(data, freq) {
 
   # for montly data i need to return the year and the month
   if(freq == 12) {
@@ -67,7 +69,7 @@ tf_start_date <- function(data, freq) {
 }
 
 # Helper function for casting yearmon objects to base dates.
-tf_yearmon_to_date <- function(x) {
+dec_tf_yearmon_to_date <- function(x) {
 
   as.character(x) %>%
     stringr::str_c("01", ., sep = " ") %>%
