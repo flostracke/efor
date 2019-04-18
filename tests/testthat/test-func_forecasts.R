@@ -11,19 +11,15 @@ test_that("Forecasting produces correct number of results for each article", {
   #get the number of expected forecasts in the result
   forecast_horizon <- 3L
 
-  sales_monthly <- sales_monthly %>%
+  sales_monthly_ts <- sales_monthly %>%
     mutate(date = yearmonth(date)) %>%
     as_tsibble(
       key = id(iterate),
       index = date
     )
 
-  sales_monthly %>%
-    filter(iterate == "Article_A") %>%
-    as.ts()
-
   #get the number of expected articles
-  nr_articles <- sales_monthly %>%
+  nr_articles <- sales_monthly_ts %>%
     get_unique_iterates() %>%
     length()
 
@@ -32,7 +28,7 @@ test_that("Forecasting produces correct number of results for each article", {
 
   #produce the forecast
   forecasts <- tf_grouped_forecasts(
-    sales_monthly,
+    sales_monthly_ts,
     n_pred = forecast_horizon,
     forecast::auto.arima,
     freq = 12,
@@ -45,6 +41,7 @@ test_that("Forecasting produces correct number of results for each article", {
     length()
   #get the number of the produced forecast
   nr_produced_forecasts <- forecasts %>%
+    as_tibble() %>%
     count(iterate) %>%
     pull(n) %>%
     mean()

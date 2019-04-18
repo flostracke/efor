@@ -74,16 +74,26 @@ tf_grouped_forecasts <- function(data, n_pred, func, parallel = T, ...) {
   create_plan()
 
   if(parallel == F) {
+
     # Prophet funktioniert nicht mit future map.. nur purr map nutzen!
     data %>%
       split(.$iterate) %>%
       purrr::map(tf_forecast, n_pred, func, ...) %>%
-      dplyr::bind_rows()
+      dplyr::bind_rows() %>%
+      as_tsibble(
+        key = id(iterate),
+        index = date
+      )
   } else {
+
     data %>%
       split(.$iterate) %>%
       furrr::future_map(tf_forecast, n_pred, func, ...) %>%
-      dplyr::bind_rows()
+      dplyr::bind_rows()%>%
+      as_tsibble(
+        key = id(iterate),
+        index = date
+      )
   }
 
 }

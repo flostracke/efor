@@ -14,12 +14,8 @@
 #'
 get_unique_iterates <- function(data) {
 
-  # check for correct input data
-  check_input_data(data)
-
   data %>%
-    dplyr::select(iterate) %>%
-    dplyr::distinct() %>%
+    dplyr::distinct(iterate) %>%
     dplyr::pull()
 }
 
@@ -37,9 +33,6 @@ get_unique_iterates <- function(data) {
 #' @examples get_subset(sales_daily, n = 1)
 #'
 get_subset <- function(data, n) {
-
-  # check for correct input data
-  check_input_data(data)
 
   used_iterates <- get_unique_iterates(data) %>%
     sample(n, replace = F)
