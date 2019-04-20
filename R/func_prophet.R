@@ -32,8 +32,10 @@ forecasts_prophet <- function(data, n_pred, freq, ...) {
 
 
   forecast <-
-    #create the prophet forcasts; suppressWarnings against some strange warning message
+    # create the prophet forcasts; suppressWarnings against some strange warning message
     suppressWarnings(stats::predict(mod_prophet, future_dates)) %>%
+
+    # wrange the prophet forecasts
     dplyr::mutate(
       key = "prophet",
       iterate = current_iterate

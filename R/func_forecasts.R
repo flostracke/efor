@@ -71,6 +71,12 @@ tf_forecast <- function(data, n_pred, func, ...) {
 #' @return The forecasted values for the dataset.
 tf_grouped_forecasts <- function(data, n_pred, func, parallel = T, ...) {
 
+  #get a vector with the original date format. workaounrd for bug in
+  #bind_rows, which looses the original date column data type
+  #orig_future_dates <- build_final_date_vector(data, n_pred)
+  orig_future_dates <- build_final_date_vector(data, n_pred)
+
+  #create plan for multiprocessing
   create_plan()
 
   if(parallel == F) {
@@ -87,16 +93,11 @@ tf_grouped_forecasts <- function(data, n_pred, func, parallel = T, ...) {
       split(.$iterate) %>%
       furrr::future_map(tf_forecast, n_pred, func, ...) %>%
       dplyr::bind_rows()
-
-    #FIX BUG bind_rows() loosing column information
-
   }
 
-  forecasts <- as_tsibble(
-      forecasts,
-      key = id(iterate),
-      index = date
-    )
+  #add the original date colmntye
+  forecasts <- dplyr::mutate(forecasts, date = orig_future_dates)
+
   return(forecasts)
 
 }
@@ -255,6 +256,23 @@ forecasts_timeseries <- function(data, func, n_pred, name, ...) {
   return(preds)
 }
 
+#Functions build the final date vector for the returned forecast dataframe
+build_final_date_vector <- function(data, n_pred) {
+
+  #get the number
+  nr_iterates <- get_unique_iterates(data) %>%
+    length()
+
+  #recycle the future date vector for each included iterate
+  orig_future_dates <- data %>%
+    tsibble::append_row(n = n_pred) %>%
+    tail(n_pred) %>%
+    dplyr::pull(date) %>%
+    rep(nr_iterates)
+
+  return(orig_future_dates)
+
+}
 
 
 
