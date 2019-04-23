@@ -24,6 +24,9 @@
 
 tf_forecast <- function(data, n_pred, func, ...) {
 
+  #verify correct input data
+  check_input_data(data)
+
   # get the name of the used function
   name <- find_original_name(func)
 
