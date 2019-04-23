@@ -49,7 +49,16 @@ create_final_forecast_df <- function(v_forecasts, df_test, name) {
 
 
 
+# Functions return the string name of a passed function
+find_original_name <- function(fun) {
 
+  objects <- ls(envir = environment(fun))
+  for (i in objects) {
+    if (identical(fun, get(i, envir = environment(fun)))) {
+      return(i)
+    }
+  }
+}
 
 
 # Helper function for getting used os
