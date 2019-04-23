@@ -72,7 +72,7 @@ tf_forecast <- function(data, n_pred, func, ...) {
 #' @export
 #'
 #' @return The forecasted values for the dataset.
-tf_grouped_forecasts <- function(data, n_pred, func, parallel = T, ...) {
+tf_grouped_forecasts <- function(data, n_pred, func, parallel = TRUE, ...) {
 
   #get a vector with the original date format. workaounrd for bug in
   #bind_rows, which looses the original date column data type
@@ -82,7 +82,7 @@ tf_grouped_forecasts <- function(data, n_pred, func, parallel = T, ...) {
   #create plan for multiprocessing
   create_plan()
 
-  if(parallel == F) {
+  if(parallel == FALSE) {
 
     # Prophet funktioniert nicht mit future map.. nur purr map nutzen!
     forecasts <- data %>%
