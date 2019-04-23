@@ -40,12 +40,13 @@ test_that("check y column exists", {
 
 # -- tests for correct datatypes ----
 
-# check date column
+
 test_that("check date column is correct datatype", {
   exdata <- sales_monthly %>%
     dplyr::mutate(date = as.character(date))
 
-  expect_error(check_correct_datatype(exdata))
+  # since we removed the check for a date datatype we expect no error message
+  expect_error(check_correct_datatype(exdata), NA)
 })
 
 #iterate column
