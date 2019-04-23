@@ -193,6 +193,10 @@ create_forecast <- function(data, mod, n_pred) {
 create_forecasting_dates <- function(data, n_pred) {
 
   data %>%
+    tsibble::as_tsibble(
+      key = id(iterate),
+      index = date
+    ) %>%
     tsibble::append_row(n = n_pred) %>%
     tail(n_pred) %>%
     dplyr::pull(date)
@@ -220,6 +224,10 @@ tf_create_model <- function(data, func, ...) {
   # convert a single tsibble timeseries to a ts object for passing to the methods
   # from the forecast package
   ts_data <- data %>%
+   tsibble::as_tsibble(
+     key = id(iterate),
+     index = date
+   ) %>%
    as.ts()
 
   # Construct the model object with additional parameters
@@ -265,6 +273,10 @@ build_final_date_vector <- function(data, n_pred) {
 
   #recycle the future date vector for each included iterate
   orig_future_dates <- data %>%
+    tsibble::as_tsibble(
+      key = id(iterate),
+      index = date
+    ) %>%
     tsibble::append_row(n = n_pred) %>%
     tail(n_pred) %>%
     dplyr::pull(date) %>%
