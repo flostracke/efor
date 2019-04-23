@@ -12,6 +12,15 @@ test_that("check the main test function", {
   expect_error(check_input_data(exdata))
 })
 
+# test get_unique_iterates ----
+test_that("check get unique iterates", {
+
+  input_iterates <- tibble::tibble(iterate = c("A", "B", "C", "C"))
+  expected_iterates <- c("A", "B", "C")
+
+  expect_equal(expected_iterates, get_unique_iterates(input_iterates))
+})
+
 # -- tests for correct column names ----
 
 # date column
