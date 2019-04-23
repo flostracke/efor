@@ -48,44 +48,9 @@ create_final_forecast_df <- function(v_forecasts, df_test, name) {
 }
 
 
-# Function returns the the Start Time of a Series for the tk_ts function
-
-dec_tf_start_date <- function(data, freq) {
-
-  # for montly data i need to return the year and the month
-  if(freq == 12) {
-    min_year <- lubridate::year(min(data$date))
-    min_month <- lubridate::month(min(data$date))
-
-    min_start <- c(min_year, min_month)
-  } else {
-    # for daily data i need to return the year and the number of the day in the year
-    min_start  <- c(lubridate::year(min(data$date)),
-                                   as.numeric(format(data$date[1], "%j")))
-  }
 
 
-  return(min_start)
-}
 
-# Helper function for casting yearmon objects to base dates.
-dec_tf_yearmon_to_date <- function(x) {
-
-  as.character(x) %>%
-    stringr::str_c("01", ., sep = " ") %>%
-    lubridate::dmy()
-}
-
-# Functions return the string name of a passed function
-find_original_name <- function(fun) {
-
-  objects <- ls(envir = environment(fun))
-  for (i in objects) {
-    if (identical(fun, get(i, envir = environment(fun)))) {
-      return(i)
-    }
-  }
-}
 
 # Helper function for getting used os
 get_os <- function() {
