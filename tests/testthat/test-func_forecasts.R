@@ -2,6 +2,7 @@
 
 context("test-func_forecasts")
 
+# -- test grouped forecast ----
 test_that("Forecasting produces correct number of results for each article", {
 
   library(furrr)
@@ -54,3 +55,15 @@ test_that("Forecasting produces correct number of results for each article", {
 })
 
 
+# test mean forecast ----
+test_that("Mean Forecast works correct", {
+
+  expected_mean_forecasts <- c(306,  350,  252, 1197)
+
+  mean_forecasts <-  tf_mean_forecast(sales_monthly,3) %>%
+    dplyr::mutate(y = as.integer(y)) %>%
+    dplyr::pull(y) %>%
+    unique()
+
+  expect_equal(expected_mean_forecasts, mean_forecasts)
+})
