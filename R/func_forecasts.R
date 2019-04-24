@@ -33,6 +33,7 @@ tf_forecast <- function(data, n_pred, func, ...) {
   # Forecasts with the prophet model:
   if (name == "prophet") {
 
+    #TODO add test for forecasts_prophet
     preds <- forecasts_prophet(data, n_pred,  ...)
 
 
@@ -92,6 +93,7 @@ tf_grouped_forecasts <- function(data, n_pred, func, parallel = TRUE, ...) {
 
   } else {
 
+    #TODO Add Test for parallel path
     forecasts <- data %>%
       split(.$iterate) %>%
       furrr::future_map(tf_forecast, n_pred, func, ...) %>%
