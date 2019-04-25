@@ -41,7 +41,7 @@ library(efor)
 library(furrr) # for running the forecasting in parallel
 library(forecast) #provides forecast mehotds
 library(prophet) # provides forecast mehod
-library(tidyquant) # for nicer plots
+
 
 sales_data <- sales_monthly
 ```
@@ -87,7 +87,6 @@ forecasts_ar <- tf_grouped_forecasts(
   train_data,        # used training dataset
   n_pred = 4,        # number of predictions
   func = auto.arima, # used forecasting method
-  freq = 12,         # Frequency. 12 for monthly data, 1 for daily data,
   parallel = TRUE    # for runiing in parallel
 )
 ```
@@ -101,7 +100,6 @@ forecasts_prophet <- tf_grouped_forecasts(
   train_data,      # used training dataset
   n_pred = 4,      # number of predictions
   func = prophet,  # used forecasting method
-  freq = 12,       # Frequency. 12 for monthly data, 1 for daily data
   parallel = FALSE #disabling parallel for prohet
 )
 ```

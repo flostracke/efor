@@ -38,8 +38,8 @@ tf_forecast <- function(data, n_pred, func, ...) {
 
 
   } else {
-  # Forecasts from the forecast package
 
+    # Forecasts from the forecast package
 
     preds <- forecasts_timeseries(data, n_pred = n_pred, func = func, name = name)
 
@@ -267,7 +267,7 @@ forecasts_timeseries <- function(data, func, n_pred, name, ...) {
     # add name of forecasting method
     dplyr::mutate(key = name) %>%
     #select columns for output with predictions intervals
-    dplyr::select(date, iterate, key, y, y_lo.95, y_hi.95)
+    dplyr::select(date, iterate, key, y, y_lo_95 = y_lo.95, y_hi_95 = y_hi.95)
 
   return(preds)
 }
