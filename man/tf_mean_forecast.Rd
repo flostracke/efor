@@ -4,12 +4,12 @@
 \alias{tf_mean_forecast}
 \title{Returns a simple mean forecast for each iterate}
 \usage{
-tf_mean_forecast(data, h)
+tf_mean_forecast(data, n_pred)
 }
 \arguments{
 \item{data}{A tibble object}
 
-\item{h}{The number of future dates that should be forecasted}
+\item{n_pred}{The number of future dates that should be forecasted}
 }
 \value{
 The tibble with the mean forecasts
@@ -18,5 +18,5 @@ The tibble with the mean forecasts
 Returns a simple mean forecast for each iterate
 }
 \examples{
-tf_mean_forecast(sales_monthly, h = 2)
+tf_mean_forecast(sales_monthly, n_pred = 2)
 }

@@ -5,7 +5,7 @@
 \title{Creates forecast for a dateframe with mutlitple timeseries separted by the
 iterate column.}
 \usage{
-tf_grouped_forecasts(data, n_pred, func, parallel = T, ...)
+tf_grouped_forecasts(data, n_pred, func, parallel = TRUE, ...)
 }
 \arguments{
 \item{data}{The dataframe containing the timeseries.}
@@ -22,8 +22,8 @@ tf_grouped_forecasts(data, n_pred, func, parallel = T, ...)
 The forecasted values for the dataset.
 }
 \description{
-The Dataframe has to have the columny date, iterate and y. Following methods are
-supported:
+The Dataframe has to have the columny date, iterate and y. Following methods
+are supported:
 }
 \details{
 - all methods form the forecasts package
