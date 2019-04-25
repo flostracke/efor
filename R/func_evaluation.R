@@ -25,23 +25,23 @@
 #'
 #' @return The calculated rmse for each method.
 #'
-tf_calc_metrics <- function(df_forecasts, df_test, metrics = "rmse", detailed = F) {
+tf_calc_metrics <- function(df_forecasts, df_test, metrics = c("rmse", "mae", "rsq", "mase", "mape"), detailed = F) {
 
 
 
   # calculate rmse, mae and rsq
-  res_metrics <- calc_yardstick_metrics(df_forecasts, df_test, func = ~yardstick::metrics, detailed)
+  res_metrics <- calc_yardstick_metrics(df_forecasts, df_test, func = yardstick::metrics, detailed)
 
   #calculate mase
-  mase <- calc_yardstick_metrics(df_forecasts, df_test, func = ~yardstick::mase, detailed)
+  mase <- calc_yardstick_metrics(df_forecasts, df_test, func = yardstick::mase, detailed)
 
   #calculate mape
-  mape <- calc_yardstick_metrics(df_forecasts, df_test, func = ~yardstick::mape, detailed)
+  mape <- calc_yardstick_metrics(df_forecasts, df_test, func = yardstick::mape, detailed)
 
   res_metrics <- res_metrics %>%
     dplyr::bind_rows(mase) %>%
     dplyr::bind_rows(mape) %>%
-    filter(metric %in% metrics)
+    dplyr::filter(metric %in% metrics)
 
   return(res_metrics)
 }
@@ -248,7 +248,7 @@ calc_yardstick_metrics <- function(forecasts, testset, func, detailed) {
   forecasts %>%
     dplyr::select(date, key, iterate, y_hat = y) %>%
     dplyr::inner_join(testset, by = c("date", "iterate")) %>%
-    dplyr::group_by(!!group) %>%
+    dplyr::group_by(!!!group) %>%
     tidyr::nest() %>%
     dplyr::mutate(
       metrics = purrr::map(
@@ -263,7 +263,8 @@ calc_yardstick_metrics <- function(forecasts, testset, func, detailed) {
     tidyr::unnest(metrics) %>%
     dplyr::rename( metric = .metric, value = .estimate) %>%
     dplyr::select(-.estimator) %>%
-    dplyr::arrange(metric, value)
+    dplyr::arrange(metric, value) %>%
+    dplyr::select(key, metric, value, dplyr::contains("iterate"))
 
 }
 
