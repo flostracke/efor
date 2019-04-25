@@ -27,13 +27,7 @@
 #'
 tf_calc_metrics <- function(df_forecasts, df_test, metrics = "rmse", detailed = F) {
 
-  # Make the grouping columns to symbols. Then they can be unquoted in the
-  # group by statement
-  if(detailed) {
-    group <- rlang::syms(c("key", "iterate"))
-  } else {
-    group <- rlang::sym("key")
-  }
+
 
   # calculate rmse, mae and rsq
   res_metrics <- calc_yardstick_metrics(df_forecasts, df_test, func = ~yardstick::metrics, detailed)
@@ -242,6 +236,14 @@ choose_dtl_metric <- function(forecasts, testset, metric = "rmse") {
 
 
 calc_yardstick_metrics <- function(forecasts, testset, func, detailed) {
+
+  # Make the grouping columns to symbols. Then they can be unquoted in the
+  # group by statement
+  if(detailed) {
+    group <- rlang::syms(c("key", "iterate"))
+  } else {
+    group <- rlang::sym("key")
+  }
 
   forecasts %>%
     dplyr::select(date, key, iterate, y_hat = y) %>%
