@@ -77,8 +77,6 @@ forecasts_plot <- forecasts_prophet %>%
 #save original date worker because of bug in bind_rows loosing the date format
 orig_dates <- c(train_data_plot$date, test_data_plot$date, forecasts_plot$date)
 
-
-
 bind_rows(train_data_plot, test_data_plot) %>%
   bind_rows(forecasts_plot) %>%
   mutate(date = orig_dates) %>%
@@ -86,10 +84,16 @@ bind_rows(train_data_plot, test_data_plot) %>%
   ggplot(aes(x = date, y = y, color = key)) +
   geom_point() +
   geom_line() +
-  geom_ribbon(data = forecasts_plot, aes(ymin = y_lo_95, ymax = y_hi_95), fill = "blue", alpha = 0.2, colour = NA) +
+  geom_ribbon(
+    data = forecasts_plot,
+    aes(ymin = y_lo_95, ymax = y_hi_95),
+    fill = "blue",
+    alpha = 0.2,
+    colour = NA
+  ) +
   ggplot2::facet_wrap(~new_label) +
   labs(
     title = "The best n Forecasts from the Prophet model",
     subtitle = "regarding the rmse"
-  )
+  ) +
   theme_minimal()
