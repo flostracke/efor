@@ -25,7 +25,7 @@
 #'
 #' @return The calculated rmse for each method.
 #'
-tf_calc_metrics <- function(df_forecasts, df_test, metrics = list("rmse"), detailed = F) {
+tf_calc_metrics <- function(df_forecasts, df_test, metrics = "rmse", detailed = F) {
 
   # Make the grouping columns to symbols. Then they can be unquoted in the
   # group by statement
