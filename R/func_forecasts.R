@@ -110,13 +110,13 @@ tf_grouped_forecasts <- function(data, n_pred, func, parallel = TRUE, ...) {
 #' Returns a simple mean forecast for each iterate
 #'
 #' @param data A tibble object
-#' @param h The number of future dates that should be forecasted
+#' @param n_pred The number of future dates that should be forecasted
 #'
 #' @return The tibble with the mean forecasts
 #' @export
 #'
-#' @examples tf_mean_forecast(sales_monthly, h = 2)
-tf_mean_forecast <- function(data, h) {
+#' @examples tf_mean_forecast(sales_monthly, n_pred = 2)
+tf_mean_forecast <- function(data, n_pred) {
 
   #get the mean values for each iterate
   value_mean <-  dplyr::group_by(data, iterate) %>%
@@ -128,7 +128,7 @@ tf_mean_forecast <- function(data, h) {
   #construct the dataframe with the future values
   date <- timetk::tk_make_future_timeseries(
     idx = unique(data$date),
-    n_future = h
+    n_future = n_pred
   )
 
   dates <- tibble::tibble(date) %>%
