@@ -245,7 +245,7 @@ calc_yardstick_metrics <- function(forecasts, testset, func, detailed) {
 
   forecasts %>%
     dplyr::select(date, key, iterate, y_hat = y) %>%
-    dplyr::inner_join(test_data, by = c("date", "iterate")) %>%
+    dplyr::inner_join(testset, by = c("date", "iterate")) %>%
     dplyr::group_by(!!group) %>%
     tidyr::nest() %>%
     dplyr::mutate(
