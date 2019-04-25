@@ -10,6 +10,14 @@
 #' @param df_forecasts The dataframe containing the forecasts.
 #' @param df_test The dataframe containing the testset.
 #' @param detailed If True the rmse for each article will be returned.
+#' @param metrics A list with the returned metrics. Following metrics are
+#'                possible:
+#'
+#'                - rmse
+#'                - mae
+#'                - rsq
+#'                - mase
+#'                - mape
 #'
 #' @examples tf_calc_metrics(sales_forecast, sales_test)
 #'
@@ -17,7 +25,7 @@
 #'
 #' @return The calculated rmse for each method.
 #'
-tf_calc_metrics <- function(df_forecasts, df_test, detailed = F) {
+tf_calc_metrics <- function(df_forecasts, df_test, metrics = list("rmse"), detailed = F) {
 
   # Make the grouping columns to symbols. Then they can be unquoted in the
   # group by statement
@@ -27,10 +35,10 @@ tf_calc_metrics <- function(df_forecasts, df_test, detailed = F) {
     group <- rlang::sym("key")
   }
 
-  metrics <- df_forecasts %>%
+  res_metrics <- df_forecasts %>%
     dplyr::select(date, key, iterate, y_hat = y) %>%
     dplyr::inner_join(df_test, by = c("date", "iterate")) %>%
-    dplyr::group_by(!!!group) %>%
+    dplyr::group_by(!!group) %>%
     tidyr::nest() %>%
     dplyr::mutate(
       metrics = purrr::map(
@@ -51,7 +59,7 @@ tf_calc_metrics <- function(df_forecasts, df_test, detailed = F) {
   mase <- df_forecasts %>%
     dplyr::select(date, key, iterate, y_hat = y) %>%
     dplyr::inner_join(df_test, by = c("date", "iterate")) %>%
-    dplyr::group_by(!!!group) %>%
+    dplyr::group_by(!!group) %>%
     tidyr::nest() %>%
     dplyr::mutate(
       metrics = purrr::map(
@@ -72,7 +80,7 @@ tf_calc_metrics <- function(df_forecasts, df_test, detailed = F) {
   mape <- df_forecasts %>%
     dplyr::select(date, key, iterate, y_hat = y) %>%
     dplyr::inner_join(df_test, by = c("date", "iterate")) %>%
-    dplyr::group_by(!!!group) %>%
+    dplyr::group_by(!!group) %>%
     tidyr::nest() %>%
     dplyr::mutate(
       metrics = purrr::map(
@@ -89,11 +97,12 @@ tf_calc_metrics <- function(df_forecasts, df_test, detailed = F) {
     dplyr::select(-.estimator, -data) %>%
     dplyr::arrange(metric, value)
 
-  metrics <- metrics %>%
+  res_metrics <- res_metrics %>%
     dplyr::bind_rows(mase) %>%
-    dplyr::bind_rows(mape)
+    dplyr::bind_rows(mape) %>%
+    filter(metric %in% metrics)
 
-  return(metrics)
+  return(res_metrics)
 }
 
 
