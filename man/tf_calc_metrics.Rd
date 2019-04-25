@@ -4,12 +4,22 @@
 \alias{tf_calc_metrics}
 \title{Creates the metrics for mutliple models.}
 \usage{
-tf_calc_metrics(df_forecasts, df_test, detailed = F)
+tf_calc_metrics(df_forecasts, df_test, metrics = list("rmse"),
+  detailed = F)
 }
 \arguments{
 \item{df_forecasts}{The dataframe containing the forecasts.}
 
 \item{df_test}{The dataframe containing the testset.}
+
+\item{metrics}{A list with the returned metrics. Following metrics are
+               possible:
+
+               - rmse
+               - mae
+               - rsq
+               - mase
+               - mape}
 
 \item{detailed}{If True the rmse for each article will be returned.}
 }

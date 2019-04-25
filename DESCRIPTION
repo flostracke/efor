@@ -23,9 +23,6 @@ Imports:
     magrittr,
     rlang,
     stringr,
-    timetk,
-    tibbletime,
-    anomalize,
     furrr,
     future,
     lubridate,
@@ -34,7 +31,10 @@ Imports:
     yardstick,
     stats,
     ggplot2,
-    forcats
+    forcats,
+    tsibble,
+    anomalize,
+    tibbletime
 Suggests:
     testthat,
     covr,

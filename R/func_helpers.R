@@ -1,11 +1,6 @@
-# Helper Funktion, die ein Forecast DF erzeugt.
-create_final_forecast_df <- function(v_forecasts, df_test, name) {
-  df_test %>% dplyr::select(-y) %>% dplyr::mutate(
-    y = v_forecasts,
-    key = name
-  )
-}
+# -- Different helper functions
 
+# -- external functions ----
 
 #' Function creates a dataframe with the forecasts. The forecasts will be
 #' combined with the testset.
@@ -19,47 +14,40 @@ create_final_forecast_df <- function(v_forecasts, df_test, name) {
 #' @export
 #'
 #' @examples
+#'
 tf_build_forecast <- function(v_forecasts, df_test, name) {
+
+  #Case numeric vector
   if (class(v_forecasts)[1] == "numeric") {
+
     create_final_forecast_df(v_forecasts, df_test, name)
   }
+
+  #Case mlr prediction object
   else {
+
     v_mlr_pred <- v_forecasts$data %>%
       tibble::as_tibble() %>%
       dplyr::select(-truth, y = response) %>%
       pull()
+
     create_final_forecast_df(v_mlr_pred, df_test, name)
   }
 }
 
+# -- internal functions ----
 
-# Function returns the the Start Time of a Series for the tk_ts function
-
-tf_start_date <- function(data, freq) {
-
-  # for montly data i need to return the year and the month
-  if(freq == 12) {
-    min_year <- lubridate::year(min(data$date))
-    min_month <- lubridate::month(min(data$date))
-
-    min_start <- c(min_year, min_month)
-  } else {
-    # for daily data i need to return the year and the number of the day in the year
-    min_start  <- c(lubridate::year(min(data$date)),
-                                   as.numeric(format(data$date[1], "%j")))
-  }
-
-
-  return(min_start)
+# Helper Funktion, die ein Forecast DF erzeugt.
+create_final_forecast_df <- function(v_forecasts, df_test, name) {
+  df_test %>%
+    dplyr::select(-y) %>%
+    dplyr::mutate(
+      y = v_forecasts,
+      key = name
+    )
 }
 
-# Helper function for casting yearmon objects to base dates.
-tf_yearmon_to_date <- function(x) {
 
-  as.character(x) %>%
-    stringr::str_c("01", ., sep = " ") %>%
-    lubridate::dmy()
-}
 
 # Functions return the string name of a passed function
 find_original_name <- function(fun) {
@@ -71,6 +59,7 @@ find_original_name <- function(fun) {
     }
   }
 }
+
 
 # Helper function for getting used os
 get_os <- function() {

@@ -12,6 +12,15 @@ test_that("check the main test function", {
   expect_error(check_input_data(exdata))
 })
 
+# test get_unique_iterates ----
+test_that("check get unique iterates", {
+
+  input_iterates <- tibble::tibble(iterate = c("A", "B", "C", "C"))
+  expected_iterates <- c("A", "B", "C")
+
+  expect_equal(expected_iterates, get_unique_iterates(input_iterates))
+})
+
 # -- tests for correct column names ----
 
 # date column
@@ -40,12 +49,13 @@ test_that("check y column exists", {
 
 # -- tests for correct datatypes ----
 
-# check date column
+
 test_that("check date column is correct datatype", {
   exdata <- sales_monthly %>%
     dplyr::mutate(date = as.character(date))
 
-  expect_error(check_correct_datatype(exdata))
+  # since we removed the check for a date datatype we expect no error message
+  expect_error(check_correct_datatype(exdata), NA)
 })
 
 #iterate column

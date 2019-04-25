@@ -14,14 +14,11 @@
 #'
 get_unique_iterates <- function(data) {
 
-  # check for correct input data
-  check_input_data(data)
-
   data %>%
-    dplyr::select(iterate) %>%
-    dplyr::distinct() %>%
+    dplyr::distinct(iterate) %>%
     dplyr::pull()
 }
+
 
 # -- Gets a subet of n iterates of the dataset
 
@@ -36,9 +33,6 @@ get_unique_iterates <- function(data) {
 #' @examples get_subset(sales_daily, n = 1)
 #'
 get_subset <- function(data, n) {
-
-  # check for correct input data
-  check_input_data(data)
 
   used_iterates <- get_unique_iterates(data) %>%
     sample(n, replace = F)
@@ -117,12 +111,6 @@ check_correct_name <- function(data) {
 # columns.
 check_correct_datatype <- function(data) {
 
-  # check date column is datatype date
-  if(class(data$date) != "Date") {
-
-    #throw an error if data column is not datatype date
-    stop("The date column is no date datatype")
-  }
 
   # check iterate column is character datatype
   if(class(data$iterate) != "character") {

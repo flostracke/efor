@@ -10,6 +10,14 @@
 #' @param df_forecasts The dataframe containing the forecasts.
 #' @param df_test The dataframe containing the testset.
 #' @param detailed If True the rmse for each article will be returned.
+#' @param metrics A list with the returned metrics. Following metrics are
+#'                possible:
+#'
+#'                - rmse
+#'                - mae
+#'                - rsq
+#'                - mase
+#'                - mape
 #'
 #' @examples tf_calc_metrics(sales_forecast, sales_test)
 #'
@@ -17,83 +25,25 @@
 #'
 #' @return The calculated rmse for each method.
 #'
-tf_calc_metrics <- function(df_forecasts, df_test, detailed = F) {
+tf_calc_metrics <- function(df_forecasts, df_test, metrics = c("rmse", "mae", "rsq", "mase", "mape"), detailed = F) {
 
-  # Make the grouping columns to symbols. Then they can be unquoted in the
-  # group by statement
-  if(detailed) {
-    group <- rlang::syms(c("key", "iterate"))
-  } else {
-    group <- rlang::sym("key")
-  }
 
-  metrics <- df_forecasts %>%
-    dplyr::select(date, key, iterate, y_hat = y) %>%
-    dplyr::inner_join(df_test, by = c("date", "iterate")) %>%
-    dplyr::group_by(!!!group) %>%
-    tidyr::nest() %>%
-    dplyr::mutate(
-      metrics = purrr::map(
-        data,
-        ~yardstick::metrics(
-        data = .x,
-        truth = y,
-        estimate = y_hat
-        )
-      )
-    ) %>%
-    tidyr::unnest(metrics) %>%
-    dplyr::rename( metric = .metric, value = .estimate) %>%
-    dplyr::select(-.estimator) %>%
-    dplyr::arrange(metric, value)
 
-  # TODO Refactor to own function
-  mase <- df_forecasts %>%
-    dplyr::select(date, key, iterate, y_hat = y) %>%
-    dplyr::inner_join(df_test, by = c("date", "iterate")) %>%
-    dplyr::group_by(!!!group) %>%
-    tidyr::nest() %>%
-    dplyr::mutate(
-      metrics = purrr::map(
-        data,
-        ~yardstick::mase(
-          data = .x,
-          truth = y,
-          estimate = y_hat
-        )
-      )
-    ) %>%
-    tidyr::unnest(metrics) %>%
-    dplyr::rename( metric = .metric, value = .estimate) %>%
-    dplyr::select(-.estimator, -data) %>%
-    dplyr::arrange(metric, value)
+  # calculate rmse, mae and rsq
+  res_metrics <- calc_yardstick_metrics(df_forecasts, df_test, func = yardstick::metrics, detailed)
 
-  # TODO Refactor to own function
-  mape <- df_forecasts %>%
-    dplyr::select(date, key, iterate, y_hat = y) %>%
-    dplyr::inner_join(df_test, by = c("date", "iterate")) %>%
-    dplyr::group_by(!!!group) %>%
-    tidyr::nest() %>%
-    dplyr::mutate(
-      metrics = purrr::map(
-        data,
-        ~yardstick::mape(
-          data = .x,
-          truth = y,
-          estimate = y_hat
-        )
-      )
-    ) %>%
-    tidyr::unnest(metrics) %>%
-    dplyr::rename( metric = .metric, value = .estimate) %>%
-    dplyr::select(-.estimator, -data) %>%
-    dplyr::arrange(metric, value)
+  #calculate mase
+  mase <- calc_yardstick_metrics(df_forecasts, df_test, func = yardstick::mase, detailed)
 
-  metrics <- metrics %>%
+  #calculate mape
+  mape <- calc_yardstick_metrics(df_forecasts, df_test, func = yardstick::mape, detailed)
+
+  res_metrics <- res_metrics %>%
     dplyr::bind_rows(mase) %>%
-    dplyr::bind_rows(mape)
+    dplyr::bind_rows(mape) %>%
+    dplyr::filter(metric %in% metrics)
 
-  return(metrics)
+  return(res_metrics)
 }
 
 
@@ -282,6 +232,40 @@ choose_dtl_metric <- function(forecasts, testset, metric = "rmse") {
     dplyr::filter(metric == !!metric_var)
 
   return(dtl_metric)
+}
+
+
+calc_yardstick_metrics <- function(forecasts, testset, func, detailed) {
+
+  # Make the grouping columns to symbols. Then they can be unquoted in the
+  # group by statement
+  if(detailed) {
+    group <- rlang::syms(c("key", "iterate"))
+  } else {
+    group <- rlang::sym("key")
+  }
+
+  forecasts %>%
+    dplyr::select(date, key, iterate, y_hat = y) %>%
+    dplyr::inner_join(testset, by = c("date", "iterate")) %>%
+    dplyr::group_by(!!!group) %>%
+    tidyr::nest() %>%
+    dplyr::mutate(
+      metrics = purrr::map(
+        data,
+        ~func(
+          data = .x,
+          truth = y,
+          estimate = y_hat
+        )
+      )
+    ) %>%
+    tidyr::unnest(metrics) %>%
+    dplyr::rename( metric = .metric, value = .estimate) %>%
+    dplyr::select(-.estimator) %>%
+    dplyr::arrange(metric, value) %>%
+    dplyr::select(key, metric, value, dplyr::contains("iterate"))
+
 }
 
 
