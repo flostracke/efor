@@ -51,8 +51,8 @@ tf_forecast <- function(data, n_pred, func, ...) {
 #' Creates forecast for a dateframe with mutlitple timeseries separted by the
 #' iterate column.
 #'
-#' The Dataframe has to have the columny date, iterate and y. Following methods are
-#' supported:
+#' The Dataframe has to have the columny date, iterate and y. Following methods
+#' are supported:
 #'
 #' - all methods form the forecasts package
 #' - prophet
@@ -126,7 +126,10 @@ tf_mean_forecast <- function(data, h) {
     dplyr::mutate(dummy = 1)
 
   #construct the dataframe with the future values
-  date <- timetk::tk_make_future_timeseries(idx = unique(data$date), n_future = h)
+  date <- timetk::tk_make_future_timeseries(
+    idx = unique(data$date),
+    n_future = h
+  )
 
   dates <- tibble::tibble(date) %>%
     # for cross join
@@ -226,8 +229,8 @@ create_forecasting_dates <- function(data, n_pred) {
 
 tf_create_model <- function(data, func, ...) {
 
-  # convert a single tsibble timeseries to a ts object for passing to the methods
-  # from the forecast package
+  # convert a single tsibble timeseries to a ts object for passing to the
+  # methods from the forecast package
   ts_data <- data %>%
    tsibble::as_tsibble(
      key = id(iterate),
