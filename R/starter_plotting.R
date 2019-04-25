@@ -32,68 +32,120 @@ forecasts_prophet <- tf_grouped_forecasts(
 forecasts <- bind_rows(forecasts_ar, forecasts_prophet) %>%
   mutate(date = yearmonth(date))
 
-#TODO Check for only one forecast method!
+tf_plot_n_forecasts(train_data, test_data, forecasts_prophet)
 
-#get the best n articles based on the rmse
-#TODO make metric dynamic!
-relevant_metric <- "rmse"
-n_iterates <- 2L
+train_
 
-dtl_metric <- tf_calc_metrics(forecasts_prophet, test_data, metrics = c("rmse", "mae", "rsq", "mase", "mape"), detailed = TRUE) %>%
-  filter(metric == relevant_metric)
+tf_plot_n_forecasts <- function(train_data, test_data, forecast_data, relevant_metric = "rmse", n = 3L, top_or_flop = "flop") {
 
-relevant_iterates <-  dtl_metric %>%
-  #Make it dynamic to get the best or the worst article  -> if else with head / tail
-  head(n_iterates) %>%
-  pull(iterate)
+  #TODO check the arguments
+  #TODO Check for only one forecast method!
 
-#prepare the labels with ordered rmse
-labels <- dtl_metric %>%
-  filter(metric == relevant_metric) %>%
-  dplyr::select(iterate, value) %>%
-  dplyr::rename(metric = value) %>%
-  dplyr::mutate(metric_order = metric) %>%
-  dplyr::mutate(metric = as.character(round(metric, 2))) %>%
-  dplyr::mutate(metric = stringr::str_c(" (", metric)) %>%
-  dplyr::mutate(metric = stringr::str_c(metric, ")")) %>%
-  dplyr::mutate(new_label = stringr::str_c(iterate, metric)) %>%
-  #reorder factors for plotting ascending rmse
-  dplyr::mutate(new_label = forcats::as_factor(new_label)) %>%
-  dplyr::mutate(new_label = forcats::fct_reorder(new_label, metric_order )) %>%
-  dplyr::select(-metric, -metric_order)
+  # calculate the metric for each iterate on order to get the top or flop iterates
+  dtl_metric <- tf_calc_metrics(
+    forecasts_prophet,
+    test_data,
+    metrics = relevant_metric,
+    detailed = TRUE
+  ) %>%
+    dplyr::filter(metric == relevant_metric)
+
+  #verify if we have to use the head or tail function and set it accordingly
+  if(top_or_flop == "top") {
+    func <- head
+  }
+
+  if(top_or_flop == "flop") {
+    func <- tail
+  }
+
+  # get the top or flop n iterates
+  relevant_iterates <-  dtl_metric %>%
+    #Make it dynamic to get the best or the worst article  -> if else with head / tail
+    func(n) %>%
+    dplyr::pull(iterate)
+
+  #prepare the labels with the ordered metric for the facet
+  labels <- dtl_metric %>%
+    filter(metric == relevant_metric) %>%
+    dplyr::select(iterate, value) %>%
+    dplyr::rename(metric = value) %>%
+    dplyr::mutate(metric_order = metric) %>%
+    dplyr::mutate(metric = as.character(round(metric, 2))) %>%
+    dplyr::mutate(metric = stringr::str_c(" (", metric)) %>%
+    dplyr::mutate(metric = stringr::str_c(metric, ")")) %>%
+    dplyr::mutate(new_label = stringr::str_c(iterate, metric)) %>%
+    #reorder factors for plotting ascending rmse
+    dplyr::mutate(new_label = forcats::as_factor(new_label)) %>%
+    dplyr::mutate(new_label = forcats::fct_reorder(new_label, metric_order )) %>%
+    dplyr::select(-metric, -metric_order)
+
+  #prepare the datasets for plotting
+  train_data_plot <- train_data %>%
+    filter(iterate %in% relevant_iterates) %>%
+    dplyr::mutate(key = "train")%>%
+    dplyr::left_join(labels, by = c("iterate"))
+
+  test_data_plot <- test_data %>%
+    filter(iterate %in% relevant_iterates) %>%
+    dplyr::mutate(key = "test")%>%
+    dplyr::left_join(labels, by = c("iterate"))
+
+  forecasts_plot <- forecast_data %>%
+    dplyr::filter(iterate %in% relevant_iterates) %>%
+    dplyr::left_join(labels, by = c("iterate"))
+
+  #save original date column because of bug in bind_rows loosing the date format
+  orig_dates <- c(train_data_plot$date, test_data_plot$date, forecasts_plot$date)
+
+  #get the model name
+  model_name <- unique(forecasts_plot$key)
+
+  #get the number of iterates
+  n_iterates <- as.character(n)
+
+  if(top_or_flop == "flop") {
+    internal_top_or_flop <- "worst"
+  } else {
+    internal_top_or_flop <- "best"
+  }
+
+  #build title and subtitle of the plot
+  output_title <- stringr::str_c("The ", internal_top_or_flop, " ", n_iterates, " Forecasts from the ", model_name, " model")
+  output_subtitle <- stringr::str_c("regarding the ", relevant_metric, " metric")
+
+  bind_rows(train_data_plot, test_data_plot) %>%
+    bind_rows(forecasts_plot) %>%
+    mutate(date = orig_dates)  %>%
+    #TODO capsule plotting in new function!
+    ggplot(aes(x = date, y = y, color = key)) +
+    geom_point() +
+    geom_line() +
+    ggplot2::facet_wrap(~new_label, scales = "free") +
+    geom_ribbon(
+      data = forecasts_plot,
+      aes(ymin = y_lo_95, ymax = y_hi_95),
+      fill = "blue",
+      alpha = 0.2,
+      colour = NA
+    ) +
+    labs(
+      title = output_title,
+      subtitle = output_subtitle
+    ) +
+    theme_minimal()
 
 
-train_data_plot <- train_data %>%
-  filter(iterate %in% relevant_iterates) %>%
-  mutate(key = "train")
+}
 
-test_data_plot <- test_data %>%
-  filter(iterate %in% relevant_iterates) %>%
-  mutate(key = "test")
 
-forecasts_plot <- forecasts_prophet %>%
-  filter(iterate %in% relevant_iterates)
 
-#save original date worker because of bug in bind_rows loosing the date format
-orig_dates <- c(train_data_plot$date, test_data_plot$date, forecasts_plot$date)
 
-bind_rows(train_data_plot, test_data_plot) %>%
-  bind_rows(forecasts_plot) %>%
-  mutate(date = orig_dates) %>%
-  dplyr::left_join(labels, by = c("iterate")) %>%
-  ggplot(aes(x = date, y = y, color = key)) +
-  geom_point() +
-  geom_line() +
-  geom_ribbon(
-    data = forecasts_plot,
-    aes(ymin = y_lo_95, ymax = y_hi_95),
-    fill = "blue",
-    alpha = 0.2,
-    colour = NA
-  ) +
-  ggplot2::facet_wrap(~new_label) +
-  labs(
-    title = "The best n Forecasts from the Prophet model",
-    subtitle = "regarding the rmse"
-  ) +
-  theme_minimal()
+
+
+
+
+
+
+
+
