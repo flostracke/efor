@@ -35,67 +35,14 @@ tf_calc_metrics <- function(df_forecasts, df_test, metrics = "rmse", detailed = 
     group <- rlang::sym("key")
   }
 
-  res_metrics <- df_forecasts %>%
-    dplyr::select(date, key, iterate, y_hat = y) %>%
-    dplyr::inner_join(df_test, by = c("date", "iterate")) %>%
-    dplyr::group_by(!!group) %>%
-    tidyr::nest() %>%
-    dplyr::mutate(
-      metrics = purrr::map(
-        data,
-        ~yardstick::metrics(
-        data = .x,
-        truth = y,
-        estimate = y_hat
-        )
-      )
-    ) %>%
-    tidyr::unnest(metrics) %>%
-    dplyr::rename( metric = .metric, value = .estimate) %>%
-    dplyr::select(-.estimator) %>%
-    dplyr::arrange(metric, value)
+  # calculate rmse, mae and rsq
+  res_metrics <- calc_yardstick_metrics(df_forecasts, df_test, func = ~yardstick::metrics, detailed)
 
-  # TODO Refactor to own function
-  mase <- df_forecasts %>%
-    dplyr::select(date, key, iterate, y_hat = y) %>%
-    dplyr::inner_join(df_test, by = c("date", "iterate")) %>%
-    dplyr::group_by(!!group) %>%
-    tidyr::nest() %>%
-    dplyr::mutate(
-      metrics = purrr::map(
-        data,
-        ~yardstick::mase(
-          data = .x,
-          truth = y,
-          estimate = y_hat
-        )
-      )
-    ) %>%
-    tidyr::unnest(metrics) %>%
-    dplyr::rename( metric = .metric, value = .estimate) %>%
-    dplyr::select(-.estimator, -data) %>%
-    dplyr::arrange(metric, value)
+  #calculate mase
+  mase <- calc_yardstick_metrics(df_forecasts, df_test, func = ~yardstick::mase, detailed)
 
-  # TODO Refactor to own function
-  mape <- df_forecasts %>%
-    dplyr::select(date, key, iterate, y_hat = y) %>%
-    dplyr::inner_join(df_test, by = c("date", "iterate")) %>%
-    dplyr::group_by(!!group) %>%
-    tidyr::nest() %>%
-    dplyr::mutate(
-      metrics = purrr::map(
-        data,
-        ~yardstick::mape(
-          data = .x,
-          truth = y,
-          estimate = y_hat
-        )
-      )
-    ) %>%
-    tidyr::unnest(metrics) %>%
-    dplyr::rename( metric = .metric, value = .estimate) %>%
-    dplyr::select(-.estimator, -data) %>%
-    dplyr::arrange(metric, value)
+  #calculate mape
+  mape <- calc_yardstick_metrics(df_forecasts, df_test, func = ~yardstick::mape, detailed)
 
   res_metrics <- res_metrics %>%
     dplyr::bind_rows(mase) %>%
@@ -291,6 +238,31 @@ choose_dtl_metric <- function(forecasts, testset, metric = "rmse") {
     dplyr::filter(metric == !!metric_var)
 
   return(dtl_metric)
+}
+
+
+calc_yardstick_metrics <- function(forecasts, testset, func, detailed) {
+
+  forecasts %>%
+    dplyr::select(date, key, iterate, y_hat = y) %>%
+    dplyr::inner_join(test_data, by = c("date", "iterate")) %>%
+    dplyr::group_by(!!group) %>%
+    tidyr::nest() %>%
+    dplyr::mutate(
+      metrics = purrr::map(
+        data,
+        ~func(
+          data = .x,
+          truth = y,
+          estimate = y_hat
+        )
+      )
+    ) %>%
+    tidyr::unnest(metrics) %>%
+    dplyr::rename( metric = .metric, value = .estimate) %>%
+    dplyr::select(-.estimator) %>%
+    dplyr::arrange(metric, value)
+
 }
 
 
