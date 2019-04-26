@@ -4,8 +4,8 @@
 \alias{tf_calc_metrics}
 \title{Creates the metrics for mutliple models.}
 \usage{
-tf_calc_metrics(df_forecasts, df_test, metrics = list("rmse"),
-  detailed = F)
+tf_calc_metrics(df_forecasts, df_test, metrics = c("rmse", "mae", "rsq",
+  "mase", "mape"), detailed = F)
 }
 \arguments{
 \item{df_forecasts}{The dataframe containing the forecasts.}
