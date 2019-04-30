@@ -37,25 +37,35 @@ First we load some packages for this example.
 ```{r message=FALSE, warning=FALSE}
 
 library(tidyverse)
+library(tsibble) # for creating nicer representation of monthly data
 library(efor)
 library(furrr) # for running the forecasting in parallel
 library(forecast) #provides forecast mehotds
 library(prophet) # provides forecast mehod
 
 
-sales_data <- sales_monthly
+sales_data <- sales_monthly %>% 
+  mutate(date = yearmonth(date))
+
+sales_data
 ```
 
-We have some sales data for four articles. We want to create forecasts for all these articles.
-The efor package makes this quite easy, because it provides functionality to create forecasts
-for multiple articles with one line of code. Right now you can use the forecast package or 
-the prophet package.
+We have some sales data for four articles. We want to create forecasts for all 
+these articles.
+The efor package makes this quite easy, because it provides functionality to 
+create forecasts for multiple articles with just one function code. Right now 
+you can apply the functions from the forecast or prophet package.
 
-The idea is that all the data has to be organised in one dataframe with the following columns:
+The idea is that all the data has to be organised in one dataframe with the 
+following columns:
 
-- date: The date: Right now it's possible to use daily and monthly data.
+- date: A date column
 - iterate: the grouping variable. In this example it is the articlenumber
 - y: the value you want to forecast
+
+The dataframe sales_data is already meeting these requirements.
+
+Before we start forecasts let's quickly create a plot of the data:
 
 ```{r}
 
@@ -64,12 +74,12 @@ ggplot(sales_data, aes(x = date, y = y)) +
   geom_point() +
   facet_wrap(~iterate) +
   ggtitle("The original series") +
-  theme_tq() 
+  theme_minimal() 
 ```
 
 We split the dataset in a train and test set. All observations from the year 2016
-go to the test set. We want to create forecasts for the next 4 months of the testset 
-and evaluate the performance.
+go into the test set. We want to create forecasts for the next 4 months of the 
+testset and evaluate the performance of different methods.
 
 ```{r}
 train_data <- sales_data %>% 
@@ -85,10 +95,12 @@ forecasts. All the methods from the forecast package can be run in parallel.
 ```{r}
 forecasts_ar <- tf_grouped_forecasts(
   train_data,        # used training dataset
-  n_pred = 4,        # number of predictions
+  n_pred = 6,        # number of predictions
   func = auto.arima, # used forecasting method
   parallel = TRUE    # for runiing in parallel
 )
+
+forecasts_ar
 ```
 
 With the same syntax you can create forecasts utilizing the prophet package:
@@ -98,17 +110,20 @@ is some bug right now.
 ```{r message=FALSE, warning=FALSE}
 forecasts_prophet <- tf_grouped_forecasts(
   train_data,      # used training dataset
-  n_pred = 4,      # number of predictions
+  n_pred = 6,      # number of predictions
   func = prophet,  # used forecasting method
   parallel = FALSE #disabling parallel for prohet
 )
+
+forecasts_prophet
 ```
 
 In order to create some plots and evaluate the performance we combine the forecasts
 into one dataset.
 
 ```{r}
-forecasts <- bind_rows(forecasts_ar, forecasts_prophet)
+forecasts <- bind_rows(forecasts_ar, forecasts_prophet) %>% 
+  mutate(date = yearmonth(date)) #reformat the date because of a bug in bind_rows
 ```
 
 The package brings also a function which makes ist quite easy to access the performance (right now thhe mae, rmse and rsquared is calculated)of multiple methods:
@@ -134,72 +149,20 @@ test_data_plot <- test_data %>%
 
 bind_rows(train_data_plot, test_data_plot) %>% 
   bind_rows(forecasts) %>% 
+  filter(key %in% c("auto.arima", "train", "test")) %>% 
+  mutate(date = yearmonth(date)) %>% 
   ggplot(aes(x = date, y = y, color = key)) +
   geom_point() +
   geom_line() +
   facet_wrap(~iterate) +
   ggtitle("Forecasted values for each article") +
   ylab("Sales amount") +
-  theme_tq() 
-```
-
-## Other included stuff
-
-There are couple of further things involded in the package, 
-which make applying techniques to multiple timeseries easier.
-
-### Decomposition
-
-There are functions for splitting timeseries in trend, seasonality and noise
-```{r}
-tf_decompose(train_data)
-```
-
-### Transformations and cleaning
-
-There are a couple of transformations possible (BoxCox, and forecast::tsclean)
-
-#### BoxCox 
-
-First we get the lambda for each timeseries
-```{r}
-lambdas <- tf_get_lambdas(train_data)
-
-lambdas
-```
-
-Apply the BoxCox transformation with the calculated lambdas:
-
-```{r}
-train_data_boxcox <- tf_boxcox(train_data)
-```
-
-Quick plot of the boxcox transformed series:
-
-```{r}
-ggplot(train_data_boxcox, aes(x = date, y = y)) +
-  geom_line() +
-  geom_point() +
-  facet_wrap(~iterate) +
-  ggtitle("The boxcox transformed series") +
-  theme_tq()
+  theme_minimal()
 ```
 
 
-Afterwards it's possible to remove the boxcox transformation:
-
-```{r}
-tf_remove_boxcox(train_data_boxcox, lambdas)
-```
  
  
-- There are functions for preparing timeseries for regression tasks 
-- there is a function for applying a gridsearch for prophet models
-
-## Next Steps
-
-- add a function for handling outliers via the anomalize package
-
 
 
 
