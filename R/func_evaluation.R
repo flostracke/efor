@@ -28,7 +28,6 @@
 tf_calc_metrics <- function(df_forecasts, df_test, metrics = c("rmse", "mae", "rsq", "mase", "mape"), detailed = F) {
 
 
-
   # calculate rmse, mae and rsq
   res_metrics <- calc_yardstick_metrics(df_forecasts, df_test, func = yardstick::metrics, detailed)
 
@@ -143,10 +142,6 @@ tf_get_best_method <- function(forecasts_valid, valid_set, metric = "rmse") {
   return(final_best_method)
 
 }
-
-
-
-
 
 
 

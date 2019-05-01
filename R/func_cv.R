@@ -1,7 +1,9 @@
 tf_grouped_forecasts_cv <- function(data, n_pred, func, parallel = TRUE, ...) {
 
   #if it is a rsample split object get the train part of the split
-  data <- rsample::analysis(data)
+  split_id <- data$id
+  data <- rsample::analysis(data$splits[[1]])
+
 
   #get a vector with the original date format. workaounrd for bug in
   #bind_rows, which looses the original date column data type
@@ -29,7 +31,11 @@ tf_grouped_forecasts_cv <- function(data, n_pred, func, parallel = TRUE, ...) {
   }
 
   #add the original date colmntye
-  forecasts <- dplyr::mutate(forecasts, date = orig_future_dates)
+  forecasts <- forecasts %>%
+    dplyr::mutate(
+            date = orig_future_dates,
+            split_id = split_id
+    )
 
   return(forecasts)
 
