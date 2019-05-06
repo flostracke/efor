@@ -22,7 +22,3 @@ The Testset Dataframe, combined with the created forecasts.
 Function creates a dataframe with the forecasts. The forecasts will be
 combined with the testset.
 }
-\examples{
-\\donotrun{tf_build_forecast(forecasts, testset, "h2o_automl")}
-
-}

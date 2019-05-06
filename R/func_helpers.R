@@ -13,7 +13,6 @@
 #' @return The Testset Dataframe, combined with the created forecasts.
 #' @export
 #'
-#' @examples \donotrun{tf_build_forecast(forecasts, testset, "h2o_automl")}
 #'
 tf_build_forecast <- function(forecasts, testset, name) {
 
