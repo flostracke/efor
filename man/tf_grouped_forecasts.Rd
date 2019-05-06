@@ -39,3 +39,11 @@ The forecasts are created in parallel with the help of the furrr package
 with the prophet model in parallel.Thats why you should create prophet
 predictions with the parameter \code{parallel = FALSE}.
 }
+\examples{
+\dontrun{tf_grouped_forecasts(
+           train_data,        # used training dataset
+           n_pred = 6,        # number of predictions
+           func = auto.arima, # used forecasting method
+           parallel = TRUE    # for runiing in parallel
+         )}
+}

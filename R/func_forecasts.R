@@ -23,6 +23,13 @@
 #'
 #' @export
 #'
+#' @examples \donotrun{tf_forecast(
+#'            train_data,        # used training dataset
+#'            n_pred = 6,        # number of predictions
+#'            func = auto.arima, # used forecasting method
+#'            parallel = TRUE    # for runiing in parallel
+#'          )}
+#'
 #' @return The forecasted values for the series
 
 tf_forecast <- function(data, n_pred, func, ...) {
@@ -43,6 +50,7 @@ tf_forecast <- function(data, n_pred, func, ...) {
   } else {
 
     # Forecasts from the forecast package
+
     preds <- forecasts_timeseries(data, n_pred = n_pred, func = func, name = name)
 
   }
@@ -75,6 +83,12 @@ tf_forecast <- function(data, n_pred, func, ...) {
 #' @param parallel Specifies if the forecasts are created in parallel.
 #' @param ... More arguments specific to the used forecasting method.
 #'
+#'@examples \dontrun{tf_grouped_forecasts(
+#'            train_data,        # used training dataset
+#'            n_pred = 6,        # number of predictions
+#'            func = auto.arima, # used forecasting method
+#'            parallel = TRUE    # for runiing in parallel
+#'          )}
 #' @export
 #'
 #' @return The forecasted values for the dataset.
@@ -157,6 +171,7 @@ tf_mean_forecast <- function(data, n_pred) {
 #'
 #' @return The produced forecast. The date column has to be corrected.
 #'
+#' @examples \dontrun{create_forecasts(sales_data, auto.arima, 6)}
 #'
 create_forecast <- function(data, mod, n_pred) {
 
@@ -201,6 +216,7 @@ create_forecast <- function(data, mod, n_pred) {
 #'
 #' @return The vector with the dates of the forecast horizon
 #'
+#' @examples \dontrun{create_forecasting_dates(sales_data, 6)}
 create_forecasting_dates <- function(data, n_pred) {
 
   data %>%
@@ -257,6 +273,7 @@ tf_create_model <- function(data, func, ...) {
 #'
 #' @return The produced forecasts
 #'
+#' @examples \dontrun{forecasts_timeseries(sales_data, auto.arima, 6, "auto.arima")}
 forecasts_timeseries <- function(data, func, n_pred, name, ...) {
 
   # Create the model object
