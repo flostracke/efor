@@ -4,31 +4,37 @@
 \alias{tf_calc_metrics}
 \title{Calculates different metrics for multiple models.}
 \usage{
-tf_calc_metrics(forecasts, test, metrics = c("rmse", "mae", "rsq",
-  "mase", "mape"), detailed = F)
+tf_calc_metrics(forecasts, testset, metrics = c("rmse", "mae", "rsq",
+  "mase", "mape"), detailed = FALSE)
 }
 \arguments{
 \item{forecasts}{The dataframe containing the forecasts.}
 
-\item{test}{The dataframe containing the testset.}
+\item{testset}{The dataframe containing the testset.}
 
 \item{metrics}{A list with the returned metrics. Following metrics are
                possible:
 
-               - rmse
-               - mae
-               - rsq
-               - mase
-               - mape}
+               \itemize{
+               \item {RMSE} Root Mean Squared Error
+               \item {MAE} Mean Absolute Error
+               \item {RSQ} R Squared
+               \item {MASE} Mean Absolute Scaled Error
+               \item {MAPE} Mean Absolute Percent Error
+               }}
 
-\item{detailed}{If True the rmse for each article will be returned.}
+\item{detailed}{If True the metrics for each article will be returned.}
 }
 \value{
-The calculated rmse for each method.
+The calculated metrics for each method.
 }
 \description{
 This function calculates different metrics for all contained forecasts in a dataframe.
 The different models have to be seperated with the help of the key column.
+}
+\details{
+The metrics are calculated with the help of the yardstick package
+(\url{https://github.com/tidymodels/yardstick}).
 }
 \examples{
 tf_calc_metrics(sales_forecast, sales_test)
