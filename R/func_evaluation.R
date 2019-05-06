@@ -2,9 +2,9 @@
 
 # external functions ----
 
-#' Creates the metrics for mutliple models.
+#' Calculates different metrics for multiple models.
 #'
-#' This function calculates the rmse for all contained forecasts in a dataframe.
+#' This function calculates different metrics for all contained forecasts in a dataframe.
 #' The different models have to be seperated with the help of the key column.
 #'
 #' @param df_forecasts The dataframe containing the forecasts.
@@ -27,6 +27,7 @@
 #'
 tf_calc_metrics <- function(df_forecasts, df_test, metrics = c("rmse", "mae", "rsq", "mase", "mape"), detailed = F) {
 
+  #TODO only calculate the metrics contrained in the metrics parameter
 
   # calculate rmse, mae and rsq
   res_metrics <- calc_yardstick_metrics(df_forecasts, df_test, func = yardstick::metrics, detailed)
