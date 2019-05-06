@@ -40,6 +40,7 @@ library(efor)
 library(furrr) # for running the forecasting in parallel
 library(forecast) #provides forecast mehotds
 library(prophet) # provides forecast mehod
+library(plotly)
 
 
 sales_data <- sales_monthly %>% 
@@ -151,16 +152,16 @@ forecasts_prophet
 #> # A tibble: 24 x 6
 #>        date iterate   key         y y_lo_95 y_hi_95
 #>       <mth> <chr>     <chr>   <dbl>   <dbl>   <dbl>
-#>  1 2016 Jan Article_A prophet 1224.   1092.   1367.
-#>  2 2016 Feb Article_A prophet  589.    450.    723.
-#>  3 2016 Mrz Article_A prophet  545.    407.    694.
-#>  4 2016 Apr Article_A prophet  334.    190.    474.
-#>  5 2016 Mai Article_A prophet  384.    252.    520.
-#>  6 2016 Jun Article_A prophet  258.    127.    403.
-#>  7 2016 Jan Article_B prophet  835.    699.    972.
-#>  8 2016 Feb Article_B prophet  635.    489.    768.
-#>  9 2016 Mrz Article_B prophet  759.    614.    893.
-#> 10 2016 Apr Article_B prophet  355.    213.    488.
+#>  1 2016 Jan Article_A prophet 1224.   1087.   1355.
+#>  2 2016 Feb Article_A prophet  589.    442.    732.
+#>  3 2016 Mrz Article_A prophet  545.    399.    682.
+#>  4 2016 Apr Article_A prophet  334.    194.    469.
+#>  5 2016 Mai Article_A prophet  384.    255.    534.
+#>  6 2016 Jun Article_A prophet  258.    110.    395.
+#>  7 2016 Jan Article_B prophet  835.    690.    966.
+#>  8 2016 Feb Article_B prophet  635.    495.    775.
+#>  9 2016 Mrz Article_B prophet  759.    620.    892.
+#> 10 2016 Apr Article_B prophet  355.    206.    489.
 #> # ... with 14 more rows
 ```
 

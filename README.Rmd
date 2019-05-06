@@ -48,6 +48,7 @@ library(efor)
 library(furrr) # for running the forecasting in parallel
 library(forecast) #provides forecast mehotds
 library(prophet) # provides forecast mehod
+library(plotly)
 
 
 sales_data <- sales_monthly %>% 
@@ -167,6 +168,7 @@ bind_rows(train_data_plot, test_data_plot) %>%
   ggtitle("Forecasted values for each article") +
   ylab("Sales amount") +
   theme_minimal()
+
 ```
 
 
