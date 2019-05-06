@@ -2,7 +2,6 @@
 
 export("%>%")
 export(check_input_data)
-export(forecasts_prophet)
 export(get_subset)
 export(get_unique_iterates)
 export(tf_build_forecast)

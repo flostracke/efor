@@ -5,13 +5,13 @@
 \title{Function creates a dataframe with the forecasts. The forecasts will be
 combined with the testset.}
 \usage{
-tf_build_forecast(v_forecasts, df_test, name)
+tf_build_forecast(forecasts, testset, name)
 }
 \arguments{
-\item{v_forecasts}{The created forecasts. You can pass a numeric vector or
+\item{forecasts}{The created forecasts. You can pass a numeric vector or
 a mlr Prediction object.}
 
-\item{df_test}{The Testset which should be enriched with the forecasts.}
+\item{testset}{The Testset which should be enriched with the forecasts.}
 
 \item{name}{The name of the forecasting method.}
 }
@@ -23,5 +23,6 @@ Function creates a dataframe with the forecasts. The forecasts will be
 combined with the testset.
 }
 \examples{
+\\donotrun{tf_build_forecast(forecasts, testset, "h2o_automl")}
 
 }

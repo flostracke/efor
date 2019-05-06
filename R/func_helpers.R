@@ -5,33 +5,33 @@
 #' Function creates a dataframe with the forecasts. The forecasts will be
 #' combined with the testset.
 #'
-#' @param v_forecasts The created forecasts. You can pass a numeric vector or
+#' @param forecasts The created forecasts. You can pass a numeric vector or
 #'                    a mlr Prediction object.
-#' @param df_test The Testset which should be enriched with the forecasts.
+#' @param testset The Testset which should be enriched with the forecasts.
 #' @param name The name of the forecasting method.
 #'
 #' @return The Testset Dataframe, combined with the created forecasts.
 #' @export
 #'
-#' @examples
+#' @examples \donotrun{tf_build_forecast(forecasts, testset, "h2o_automl")}
 #'
-tf_build_forecast <- function(v_forecasts, df_test, name) {
+tf_build_forecast <- function(forecasts, testset, name) {
 
   #Case numeric vector
-  if (class(v_forecasts)[1] == "numeric") {
+  if (class(forecasts)[1] == "numeric") {
 
-    create_final_forecast_df(v_forecasts, df_test, name)
+    create_final_forecast_df(forecasts, testset, name)
   }
 
   #Case mlr prediction object
   else {
 
-    v_mlr_pred <- v_forecasts$data %>%
+    v_mlr_pred <- forecasts$data %>%
       tibble::as_tibble() %>%
       dplyr::select(-truth, y = response) %>%
       pull()
 
-    create_final_forecast_df(v_mlr_pred, df_test, name)
+    create_final_forecast_df(v_mlr_pred, testset, name)
   }
 }
 
@@ -47,8 +47,6 @@ create_final_forecast_df <- function(v_forecasts, df_test, name) {
     )
 }
 
-
-
 # Functions return the string name of a passed function
 find_original_name <- function(fun) {
 
@@ -59,7 +57,6 @@ find_original_name <- function(fun) {
     }
   }
 }
-
 
 # Helper function for getting used os
 get_os <- function() {
