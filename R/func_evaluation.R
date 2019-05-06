@@ -7,8 +7,8 @@
 #' This function calculates different metrics for all contained forecasts in a dataframe.
 #' The different models have to be seperated with the help of the key column.
 #'
-#' @param df_forecasts The dataframe containing the forecasts.
-#' @param df_test The dataframe containing the testset.
+#' @param forecasts The dataframe containing the forecasts.
+#' @param testset The dataframe containing the testset.
 #' @param detailed If True the rmse for each article will be returned.
 #' @param metrics A list with the returned metrics. Following metrics are
 #'                possible:
@@ -25,18 +25,18 @@
 #'
 #' @return The calculated rmse for each method.
 #'
-tf_calc_metrics <- function(df_forecasts, df_test, metrics = c("rmse", "mae", "rsq", "mase", "mape"), detailed = F) {
+tf_calc_metrics <- function(forecasts, testset, metrics = c("rmse", "mae", "rsq", "mase", "mape"), detailed = F) {
 
   #TODO only calculate the metrics contrained in the metrics parameter
 
   # calculate rmse, mae and rsq
-  res_metrics <- calc_yardstick_metrics(df_forecasts, df_test, func = yardstick::metrics, detailed)
+  res_metrics <- calc_yardstick_metrics(forecasts, testset, func = yardstick::metrics, detailed)
 
   #calculate mase
-  mase <- calc_yardstick_metrics(df_forecasts, df_test, func = yardstick::mase, detailed)
+  mase <- calc_yardstick_metrics(forecasts, testset, func = yardstick::mase, detailed)
 
   #calculate mape
-  mape <- calc_yardstick_metrics(df_forecasts, df_test, func = yardstick::mape, detailed)
+  mape <- calc_yardstick_metrics(forecasts, testset, func = yardstick::mape, detailed)
 
   res_metrics <- res_metrics %>%
     dplyr::bind_rows(mase) %>%
