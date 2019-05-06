@@ -110,3 +110,51 @@ choose_dtl_metric <- function(forecasts, testset, metric = "rmse") {
 
   return(dtl_metric)
 }
+
+#' Gridseach for Prophetmodels.
+#'
+#' Implements gridsearch for prophet models over multiple articles.
+#'
+#' @param data The Dataframe containing the data
+#' @param n_pred The forecast horizon
+#' @param parallel specifies if the forecasting is run in parallel
+#' @param parameter_grid the used parameters in the random search
+#'
+#' @export
+#'
+#' @return A dataframe with the rmse for each parameter combination
+#'
+tf_prophet_grid <- function(data, test_data, n_pred, freq, parallel = FALSE, parameter_grid, ...) {
+
+  #INIT Columns for rmse
+  parameter_grid$rmse <- NA
+
+  #Iterate over all passed parameter combinations
+  # Search best parameters. Rewrite with furrr::map=
+  for (i in 1:nrow(parameter_grid)) {
+
+    parameters <- parameter_grid[i, ]
+
+    forecasts <-
+      tf_grouped_forecasts(
+        data,
+        n_pred,
+        prophet::prophet,
+        freq,
+        parallel,
+        #specific prophet parameters
+        seasonality.prior.scale = parameters$seasonality.prior.scale,
+        changepoint.prior.scale = parameters$changepoint.prior.scale,
+        changepoint.range = parameters$changepoint.range,
+        seasonality.mode = parameters$seasonality.mode,
+        ...
+      )
+
+    calced_rmse <- dplyr::inner_join(test_data, forecasts, by = c("iterate", "date")) %>%
+      yardstick::rmse(y.x, y.y) %>%
+      pull(.estimate)
+
+    parameter_grid$rmse[i] <- calced_rmse
+  }
+  return(parameter_grid)
+}
