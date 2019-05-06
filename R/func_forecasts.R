@@ -171,7 +171,6 @@ tf_mean_forecast <- function(data, n_pred) {
 #'
 #' @return The produced forecast. The date column has to be corrected.
 #'
-#' @examples \donotrun{create_forecasts(sales_data, auto.arima, 6)}
 #'
 create_forecast <- function(data, mod, n_pred) {
 
