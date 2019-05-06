@@ -50,7 +50,6 @@ tf_forecast <- function(data, n_pred, func, ...) {
   } else {
 
     # Forecasts from the forecast package
-
     preds <- forecasts_timeseries(data, n_pred = n_pred, func = func, name = name)
 
   }
@@ -215,7 +214,6 @@ create_forecast <- function(data, mod, n_pred) {
 #'
 #' @return The vector with the dates of the forecast horizon
 #'
-#' @examples \donotrun{create_forecasting_dates(sales_data, 6)}
 create_forecasting_dates <- function(data, n_pred) {
 
   data %>%
@@ -272,7 +270,6 @@ tf_create_model <- function(data, func, ...) {
 #'
 #' @return The produced forecasts
 #'
-#' @examples \donotrun{forecasts_timeseries(sales_data, auto.arima, 6, "auto.arima")}
 forecasts_timeseries <- function(data, func, n_pred, name, ...) {
 
   # Create the model object

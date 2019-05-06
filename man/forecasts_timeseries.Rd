@@ -21,6 +21,3 @@ The produced forecasts
 \description{
 Wrapper function for forecasts from the forecast package
 }
-\examples{
-\\donotrun{forecasts_timeseries(sales_data, auto.arima, 6, "auto.arima")}
-}
