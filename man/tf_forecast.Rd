@@ -32,7 +32,7 @@ supported:
 }
 }
 \examples{
-\\donotrun{tf_forecast(
+\dontrun{tf_forecast(
            train_data,        # used training dataset
            n_pred = 6,        # number of predictions
            func = auto.arima, # used forecasting method
