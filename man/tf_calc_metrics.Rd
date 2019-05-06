@@ -36,7 +36,3 @@ The different models have to be seperated with the help of the key column.
 The metrics are calculated with the help of the yardstick package
 (\url{https://github.com/tidymodels/yardstick}).
 }
-\examples{
-\\donotrun{tf_calc_metrics(sales_forecast, sales_test)}
-
-}

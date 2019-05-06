@@ -22,6 +22,3 @@ The calculated metrics for each method.
 It is used in \code{\link{tf_calc_metrics}} for making the function calls for
 different metrics modular.
 }
-\examples{
-\dontrun{calc_yardstick_metrics(forecasts, testset, func = yardstick::mase, detailed)}
-}

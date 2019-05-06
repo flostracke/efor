@@ -31,12 +31,3 @@ supported:
     \item {smooth package: (\url{https://CRAN.R-project.org/package=smooth})}
 }
 }
-\examples{
-\\donotrun{tf_forecast(
-           train_data,        # used training dataset
-           n_pred = 6,        # number of predictions
-           func = auto.arima, # used forecasting method
-           parallel = TRUE    # for runiing in parallel
-         )}
-
-}

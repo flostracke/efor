@@ -24,9 +24,6 @@
 #'                \item{MAPE}{Calculates the  Mean Absolute Percent Error}
 #'                }
 #'
-#'
-#' @examples \donotrun{tf_calc_metrics(sales_forecast, sales_test)}
-#'
 #' @export
 #'
 #' @return The calculated metrics for each method.
@@ -68,7 +65,6 @@ tf_calc_metrics <- function(forecasts, testset, metrics = c("rmse", "mae", "rsq"
 #'
 #' @return The calculated metrics for each method.
 #'
-#' @examples \dontrun{calc_yardstick_metrics(forecasts, testset, func = yardstick::mase, detailed)}
 calc_yardstick_metrics <- function(forecasts, testset, func, detailed) {
 
   # Make the grouping columns to symbols. Then they can be unquoted in the

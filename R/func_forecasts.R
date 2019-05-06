@@ -23,13 +23,6 @@
 #'
 #' @export
 #'
-#' @examples \donotrun{tf_forecast(
-#'            train_data,        # used training dataset
-#'            n_pred = 6,        # number of predictions
-#'            func = auto.arima, # used forecasting method
-#'            parallel = TRUE    # for runiing in parallel
-#'          )}
-#'
 #' @return The forecasted values for the series
 
 tf_forecast <- function(data, n_pred, func, ...) {
@@ -82,12 +75,6 @@ tf_forecast <- function(data, n_pred, func, ...) {
 #' @param parallel Specifies if the forecasts are created in parallel.
 #' @param ... More arguments specific to the used forecasting method.
 #'
-#'@examples \donotrun{tf_grouped_forecasts(
-#'            train_data,        # used training dataset
-#'            n_pred = 6,        # number of predictions
-#'            func = auto.arima, # used forecasting method
-#'            parallel = TRUE    # for runiing in parallel
-#'          )}
 #' @export
 #'
 #' @return The forecasted values for the dataset.
