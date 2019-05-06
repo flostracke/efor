@@ -10,10 +10,12 @@ status](https://codecov.io/gh/flostracke/efor/branch/master/graph/badge.svg)](ht
 # efor
 
 The goal of EasyFORcasting or short efor is to make it easier if you
-have to forecast or apply preprocessing to multiple timeseries.
-Furthermore the the package supports in transforming timeseries data for
-applying machine learning or deeplearning to it. (Creation of lagged
-values)
+have to forecast multiple timeseries. The package supports you in
+creating forecasts with different methods implemented in the forecast,
+forecastHyrid, smooth and prophet package. Furthermore it provides some
+functions for evaluating these forecasts.
+
+Following you see a possible workflow:
 
 ## Installation
 
@@ -25,7 +27,10 @@ You can install the released version of efor from github with:
 
 ## Example
 
-First we load some packages for this example.
+### Setup
+
+First we load some packages for this example. The efor package contains
+some fictional timeseries data for demonstrating the apporaches:
 
 ``` r
 
@@ -60,8 +65,7 @@ sales_data
 We have some sales data for four articles. We want to create forecasts
 for all these articles. The efor package makes this quite easy, because
 it provides functionality to create forecasts for multiple articles with
-just one function code. Right now you can apply the functions from the
-forecast or prophet package.
+just one function call
 
 The idea is that all the data has to be organised in one dataframe with
 the following columns:
@@ -104,6 +108,8 @@ Now we can apply the the auto.arima function to the dataset and create
 the forecasts. All the methods from the forecast package can be run in
 parallel.
 
+### Model Fitting
+
 ``` r
 forecasts_ar <- tf_grouped_forecasts(
   train_data,        # used training dataset
@@ -145,18 +151,20 @@ forecasts_prophet
 #> # A tibble: 24 x 6
 #>        date iterate   key         y y_lo_95 y_hi_95
 #>       <mth> <chr>     <chr>   <dbl>   <dbl>   <dbl>
-#>  1 2016 Jan Article_A prophet 1224.   1081.   1358.
-#>  2 2016 Feb Article_A prophet  589.    437.    727.
-#>  3 2016 Mrz Article_A prophet  545.    416.    682.
-#>  4 2016 Apr Article_A prophet  334.    195.    471.
-#>  5 2016 Mai Article_A prophet  384.    242.    517.
-#>  6 2016 Jun Article_A prophet  258.    122.    390.
-#>  7 2016 Jan Article_B prophet  835.    704.    971.
-#>  8 2016 Feb Article_B prophet  635.    499.    779.
-#>  9 2016 Mrz Article_B prophet  759.    628.    908.
-#> 10 2016 Apr Article_B prophet  355.    215.    495.
+#>  1 2016 Jan Article_A prophet 1224.   1092.   1367.
+#>  2 2016 Feb Article_A prophet  589.    450.    723.
+#>  3 2016 Mrz Article_A prophet  545.    407.    694.
+#>  4 2016 Apr Article_A prophet  334.    190.    474.
+#>  5 2016 Mai Article_A prophet  384.    252.    520.
+#>  6 2016 Jun Article_A prophet  258.    127.    403.
+#>  7 2016 Jan Article_B prophet  835.    699.    972.
+#>  8 2016 Feb Article_B prophet  635.    489.    768.
+#>  9 2016 Mrz Article_B prophet  759.    614.    893.
+#> 10 2016 Apr Article_B prophet  355.    213.    488.
 #> # ... with 14 more rows
 ```
+
+### Evaluation
 
 In order to create some plots and evaluate the performance we combine
 the forecasts into one dataset.

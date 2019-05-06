@@ -19,4 +19,5 @@ Actually calls the forecast functions and applies sweep to the result.
 }
 \examples{
 \\donotrun{create_forecasts(sales_data, auto.arima, 6)}
+
 }
