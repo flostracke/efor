@@ -15,12 +15,12 @@ tf_calc_metrics(forecasts, testset, metrics = c("rmse", "mae", "rsq",
 \item{metrics}{A list with the returned metrics. Following metrics are
                possible:
 
-               \itemize{
-               \item {RMSE} Root Mean Squared Error
-               \item {MAE} Mean Absolute Error
-               \item {RSQ} R Squared
-               \item {MASE} Mean Absolute Scaled Error
-               \item {MAPE} Mean Absolute Percent Error
+               \describe{
+               \item{RMSE}{Calculates the Root Mean Squared Error}
+               \item{MAE}{Calculates the Mean Absolute Error}
+               \item{RSQ}{Calculates the  R Squared}
+               \item{MASE}{Calculates the Mean Absolute Scaled Error}
+               \item{MAPE}{Calculates the  Mean Absolute Percent Error}
                }}
 
 \item{detailed}{If True the metrics for each article will be returned.}
@@ -37,6 +37,6 @@ The metrics are calculated with the help of the yardstick package
 (\url{https://github.com/tidymodels/yardstick}).
 }
 \examples{
-tf_calc_metrics(sales_forecast, sales_test)
+\\donotrun{tf_calc_metrics(sales_forecast, sales_test)}
 
 }

@@ -23,9 +23,20 @@ The Dataframe has to have the columny date and y. Following methods are
 supported:
 }
 \details{
-- all methods form the forecasts package
-- prophet
-- forecastHybrid
-- forecastxgb
-- smooth package
+\itemize{
+    \item {forecasts package: All methods from the forecast packages
+    (\url{https://CRAN.R-project.org/package=forecast}) should work}
+    \item {prophet: (\url{https://CRAN.R-project.org/package=prophet})}
+    \item {forecastHybrid: (\url{https://CRAN.R-project.org/package=forecastHybrid })}
+    \item {smooth package: (\url{https://CRAN.R-project.org/package=smooth})}
+}
+}
+\examples{
+\\donotrun{tf_forecast(
+           train_data,        # used training dataset
+           n_pred = 6,        # number of predictions
+           func = auto.arima, # used forecasting method
+           parallel = TRUE    # for runiing in parallel
+         )}
+
 }
