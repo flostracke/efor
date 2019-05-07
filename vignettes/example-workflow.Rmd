@@ -40,12 +40,13 @@ First we load some packages for this example. The efor package contains some
 fictional timeseries data for demonstrating the apporaches:
 ```{r message=FALSE, warning=FALSE}
 
-library(tidyverse)
+library(dplyr)
 library(tsibble) # for creating nicer representation of monthly data
 library(efor)
 library(furrr) # for running the forecasting in parallel
 library(forecast) #provides forecast mehotds
 library(prophet) # provides forecast mehod
+library(ggplot2)
 
 
 sales_data <- sales_monthly %>% 
