@@ -140,8 +140,7 @@ forecasts <- bind_rows(forecasts_ar, forecasts_ets) %>%
 The package brings also a function which makes it quite easy to access the performance (right now thhe mae, rmse and rsquared is calculated) of all the forecasting methods in the passed prediction dataframe:
 
 ```{r}
-tf_calc_metrics(forecasts, test_data) %>% 
-  spread(metric, value)
+tf_calc_metrics(forecasts, test_data) 
 ```
 
 Also it is possible to access the performance of each article:
