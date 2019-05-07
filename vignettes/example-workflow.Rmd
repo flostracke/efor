@@ -45,7 +45,6 @@ library(tsibble) # for creating nicer representation of monthly data
 library(efor)
 library(furrr) # for running the forecasting in parallel
 library(forecast) #provides forecast mehotds
-library(prophet) # provides forecast mehod
 library(ggplot2)
 
 
@@ -115,19 +114,17 @@ forecasts_ar <- tf_grouped_forecasts(
 forecasts_ar
 ```
 
-With the same syntax you can create forecasts utilizing the prophet package:
-Please note that there we disable the parallel function for prophet, because there 
-is some bug right now.
+
 
 ```{r message=FALSE, warning=FALSE}
-forecasts_prophet <- tf_grouped_forecasts(
+forecasts_ets <- tf_grouped_forecasts(
   train_data,      # used training dataset
   n_pred = 6,      # number of predictions
-  func = prophet,  # used forecasting method
+  func = ets,  # used forecasting method
   parallel = FALSE #disabling parallel for prohet
 )
 
-forecasts_prophet
+forecasts_ets
 ```
 
 ### Evaluation
@@ -136,7 +133,7 @@ In order to create some plots and evaluate the performance we combine the foreca
 into one dataset.
 
 ```{r}
-forecasts <- bind_rows(forecasts_ar, forecasts_prophet) %>% 
+forecasts <- bind_rows(forecasts_ar, forecasts_ets) %>% 
   mutate(date = yearmonth(date)) #reformat the date because of a bug in bind_rows
 ```
 
