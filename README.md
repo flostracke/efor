@@ -5,7 +5,7 @@
 status](https://travis-ci.org/flostracke/efor.svg?branch=master)](https://travis-ci.org/flostracke/efor)
 [![Coverage
 status](https://codecov.io/gh/flostracke/efor/branch/master/graph/badge.svg)](https://codecov.io/github/flostracke/efor?branch=master)
-[![stability-experimental](https://img.shields.io/badge/stability-experimental-orange.svg)](https://github.com/joethorley/stability-badges#experimental)
+[![lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
 
 # efor
 
@@ -40,7 +40,6 @@ library(efor)
 library(furrr) # for running the forecasting in parallel
 library(forecast) #provides forecast mehotds
 library(prophet) # provides forecast mehod
-library(plotly)
 
 
 sales_data <- sales_monthly %>% 
@@ -76,9 +75,16 @@ the following columns:
     articlenumber
   - y: the value you want to forecast
 
-The dataframe sales\_data is already meeting these requirements.
+The dataframe sales\_data is already meeting these requirements. You can
+verify the correct structure with the following function call,
+otherweise there would be an error:
 
-Before we start forecasts let’s quickly create a plot of the data:
+``` r
+check_input_data(sales_data)
+```
+
+Before we start forecasts let’s quickly create a plot of the 4 different
+articles we want to forecast:
 
 ``` r
 
@@ -90,7 +96,7 @@ ggplot(sales_data, aes(x = date, y = y)) +
   theme_minimal() 
 ```
 
-<img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
 
 We split the dataset in a train and test set. All observations from the
 year 2016 go into the test set. We want to create forecasts for the next
@@ -152,16 +158,16 @@ forecasts_prophet
 #> # A tibble: 24 x 6
 #>        date iterate   key         y y_lo_95 y_hi_95
 #>       <mth> <chr>     <chr>   <dbl>   <dbl>   <dbl>
-#>  1 2016 Jan Article_A prophet 1224.   1087.   1355.
-#>  2 2016 Feb Article_A prophet  589.    442.    732.
-#>  3 2016 Mrz Article_A prophet  545.    399.    682.
-#>  4 2016 Apr Article_A prophet  334.    194.    469.
-#>  5 2016 Mai Article_A prophet  384.    255.    534.
-#>  6 2016 Jun Article_A prophet  258.    110.    395.
-#>  7 2016 Jan Article_B prophet  835.    690.    966.
-#>  8 2016 Feb Article_B prophet  635.    495.    775.
-#>  9 2016 Mrz Article_B prophet  759.    620.    892.
-#> 10 2016 Apr Article_B prophet  355.    206.    489.
+#>  1 2016 Jan Article_A prophet 1224.   1072.   1365.
+#>  2 2016 Feb Article_A prophet  589.    453.    744.
+#>  3 2016 Mrz Article_A prophet  545.    409.    679.
+#>  4 2016 Apr Article_A prophet  334.    196.    470.
+#>  5 2016 Mai Article_A prophet  384.    240.    518.
+#>  6 2016 Jun Article_A prophet  258.    114.    399.
+#>  7 2016 Jan Article_B prophet  835.    691.    972.
+#>  8 2016 Feb Article_B prophet  635.    494.    771.
+#>  9 2016 Mrz Article_B prophet  759.    618.    899.
+#> 10 2016 Apr Article_B prophet  355.    216.    496.
 #> # ... with 14 more rows
 ```
 
@@ -175,25 +181,18 @@ forecasts <- bind_rows(forecasts_ar, forecasts_prophet) %>%
   mutate(date = yearmonth(date)) #reformat the date because of a bug in bind_rows
 ```
 
-The package brings also a function which makes ist quite easy to access
-the performance (right now thhe mae, rmse and rsquared is calculated)of
-multiple methods:
+The package brings also a function which makes it quite easy to access
+the performance (right now thhe mae, rmse and rsquared is calculated) of
+all the forecasting methods in the passed prediction dataframe:
 
 ``` r
-tf_calc_metrics(forecasts, test_data)
-#> # A tibble: 10 x 3
-#>    key        metric   value
-#>    <chr>      <chr>    <dbl>
-#>  1 auto.arima mae    129.   
-#>  2 prophet    mae    135.   
-#>  3 prophet    rmse   188.   
-#>  4 auto.arima rmse   192.   
-#>  5 auto.arima rsq      0.865
-#>  6 prophet    rsq      0.869
-#>  7 auto.arima mase     0.469
-#>  8 prophet    mase     0.491
-#>  9 auto.arima mape    25.4  
-#> 10 prophet    mape    31.4
+tf_calc_metrics(forecasts, test_data) %>% 
+  spread(metric, value)
+#> # A tibble: 2 x 6
+#>   key          mae  mape  mase  rmse   rsq
+#>   <chr>      <dbl> <dbl> <dbl> <dbl> <dbl>
+#> 1 auto.arima  129.  25.4 0.469  192. 0.865
+#> 2 prophet     135.  31.4 0.491  188. 0.869
 ```
 
 Also it is possible to access the performance of each article:
@@ -239,4 +238,4 @@ bind_rows(train_data_plot, test_data_plot) %>%
   theme_minimal()
 ```
 
-<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-10-1.png" width="100%" />

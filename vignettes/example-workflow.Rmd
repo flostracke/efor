@@ -1,22 +1,21 @@
 ---
-output: github_document
+title: "Example Workflow"
+author: "Florian Stracke"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
-
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
-[![Travis build status](https://travis-ci.org/flostracke/efor.svg?branch=master)](https://travis-ci.org/flostracke/efor)
-[![Coverage status](https://codecov.io/gh/flostracke/efor/branch/master/graph/badge.svg)](https://codecov.io/github/flostracke/efor?branch=master)
-[![lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
-
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>",
-  fig.path = "man/figures/README-",
-  out.width = "100%"
+  comment = "#>"
 )
 ```
+
 # efor
 
 The goal of EasyFORcasting or short efor is to make it easier if you have to forecast multiple timeseries.
@@ -33,7 +32,6 @@ You can install the released version of efor from github with:
 ``` r
 #devtools::install_github("flostracke/efor")
 ```
-
 ## Example
 
 ### Setup
@@ -176,10 +174,3 @@ bind_rows(train_data_plot, test_data_plot) %>%
   theme_minimal()
 
 ```
-
-
- 
- 
-
-
-
