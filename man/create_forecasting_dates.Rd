@@ -17,3 +17,6 @@ The vector with the dates of the forecast horizon
 \description{
 Creates a vector with the dates for which the forecasts should be created
 }
+\examples{
+\dontrun{create_forecasting_dates(sales_data, 6)}
+}

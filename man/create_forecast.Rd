@@ -17,3 +17,7 @@ The produced forecast. The date column has to be corrected.
 \description{
 Actually calls the forecast functions and applies sweep to the result.
 }
+\examples{
+\dontrun{create_forecasts(sales_data, auto.arima, 6)}
+
+}

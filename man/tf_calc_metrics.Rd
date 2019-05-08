@@ -2,35 +2,37 @@
 % Please edit documentation in R/func_evaluation.R
 \name{tf_calc_metrics}
 \alias{tf_calc_metrics}
-\title{Creates the metrics for mutliple models.}
+\title{Calculates different metrics for multiple models.}
 \usage{
-tf_calc_metrics(df_forecasts, df_test, metrics = list("rmse"),
-  detailed = F)
+tf_calc_metrics(forecasts, testset, metrics = c("rmse", "mae", "rsq",
+  "mase", "mape"), detailed = FALSE)
 }
 \arguments{
-\item{df_forecasts}{The dataframe containing the forecasts.}
+\item{forecasts}{The dataframe containing the forecasts.}
 
-\item{df_test}{The dataframe containing the testset.}
+\item{testset}{The dataframe containing the testset.}
 
 \item{metrics}{A list with the returned metrics. Following metrics are
                possible:
 
-               - rmse
-               - mae
-               - rsq
-               - mase
-               - mape}
+               \describe{
+               \item{RMSE}{Calculates the Root Mean Squared Error}
+               \item{MAE}{Calculates the Mean Absolute Error}
+               \item{RSQ}{Calculates the  R Squared}
+               \item{MASE}{Calculates the Mean Absolute Scaled Error}
+               \item{MAPE}{Calculates the  Mean Absolute Percent Error}
+               }}
 
-\item{detailed}{If True the rmse for each article will be returned.}
+\item{detailed}{If True the metrics for each article will be returned.}
 }
 \value{
-The calculated rmse for each method.
+The calculated metrics for each method.
 }
 \description{
-This function calculates the rmse for all contained forecasts in a dataframe.
+This function calculates different metrics for all contained forecasts in a dataframe.
 The different models have to be seperated with the help of the key column.
 }
-\examples{
-tf_calc_metrics(sales_forecast, sales_test)
-
+\details{
+The metrics are calculated with the help of the yardstick package
+(\url{https://github.com/tidymodels/yardstick}).
 }

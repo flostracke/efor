@@ -2,51 +2,7 @@
 
 # -- external functions ----
 
-#' Creates forecast for a dateframe.
-#'
-#' The Dataframe has to have the columny date and y. Following methods are
-#' supported:
-#'
-#' - all methods form the forecasts package
-#' - prophet
-#' - forecastHybrid
-#' - forecastxgb
-#' - smooth package
-#'
-#' @param data The dataframe containing the timeseries.
-#' @param n_pred The forecast horizon.
-#' @param func The used forecast method.
-#' @param ... More arguments specific to the used forecasting method.
-#'
-#' @export
-#'
-#' @return The forecasted values for the series
 
-tf_forecast <- function(data, n_pred, func, ...) {
-
-  #verify correct input data
-  check_input_data(data)
-
-  # get the name of the used function
-  name <- find_original_name(func)
-
-  # Forecasts with the prophet model:
-  if (name == "prophet") {
-
-    #TODO add test for forecasts_prophet
-    preds <- forecasts_prophet(data, n_pred,  ...)
-
-
-  } else {
-
-    # Forecasts from the forecast package
-
-    preds <- forecasts_timeseries(data, n_pred = n_pred, func = func, name = name)
-
-  }
-
-  return(preds)
-}
 
 #' Creates forecast for a dateframe with mutlitple timeseries separted by the
 #' iterate column.
@@ -54,15 +10,18 @@ tf_forecast <- function(data, n_pred, func, ...) {
 #' The Dataframe has to have the columny date, iterate and y. Following methods
 #' are supported:
 #'
-#' - all methods form the forecasts package
-#' - prophet
-#' - forecastHybrid
-#' - forecastxgb
-#' - smooth package
+#' \itemize{
+#'     \item {forecasts package: All methods from the forecast packages
+#'     (\url{https://CRAN.R-project.org/package=forecast}) should work}
+#'     \item {prophet: (\url{https://CRAN.R-project.org/package=prophet})}
+#'     \item {forecastHybrid: (\url{https://CRAN.R-project.org/package=forecastHybrid })}
+#'     \item {smooth package: (\url{https://CRAN.R-project.org/package=smooth})}
+#'}
 #'
-#' The forecasts are created in parallel with the help of the furrr package.
-#' Since the package is quite fresh there might be some bugs involved
-#' (for example the prophet model is somehow not working in parallel mode).
+#' The forecasts are created in parallel with the help of the furrr package
+#' (\url{https://github.com/DavisVaughan/furrr}). Right now there is some bug
+#' with the prophet model in parallel.Thats why you should create prophet
+#' predictions with the parameter \code{parallel = FALSE}.
 #'
 #' @param data The dataframe containing the timeseries.
 #' @param n_pred The forecast horizon.
@@ -70,6 +29,12 @@ tf_forecast <- function(data, n_pred, func, ...) {
 #' @param parallel Specifies if the forecasts are created in parallel.
 #' @param ... More arguments specific to the used forecasting method.
 #'
+#'@examples \dontrun{tf_grouped_forecasts(
+#'            train_data,        # used training dataset
+#'            n_pred = 6,        # number of predictions
+#'            func = auto.arima, # used forecasting method
+#'            parallel = TRUE    # for runiing in parallel
+#'          )}
 #' @export
 #'
 #' @return The forecasted values for the dataset.
@@ -77,7 +42,6 @@ tf_grouped_forecasts <- function(data, n_pred, func, parallel = TRUE, ...) {
 
   #get a vector with the original date format. workaounrd for bug in
   #bind_rows, which looses the original date column data type
-  #orig_future_dates <- build_final_date_vector(data, n_pred)
   orig_future_dates <- build_final_date_vector(data, n_pred)
 
   #create plan for multiprocessing
@@ -146,6 +110,60 @@ tf_mean_forecast <- function(data, n_pred) {
 
 # -- internal functions ----
 
+#' Creates forecast for a dateframe.
+#'
+#' The Dataframe has to have the columny date and y. Following methods are
+#' supported:
+#'
+#' \itemize{
+#'     \item {forecasts package: All methods from the forecast packages
+#'     (\url{https://CRAN.R-project.org/package=forecast}) should work}
+#'     \item {prophet: (\url{https://CRAN.R-project.org/package=prophet})}
+#'     \item {forecastHybrid: (\url{https://CRAN.R-project.org/package=forecastHybrid })}
+#'     \item {smooth package: (\url{https://CRAN.R-project.org/package=smooth})}
+#'}
+#'
+#'
+#' @param data The dataframe containing the timeseries.
+#' @param n_pred The forecast horizon.
+#' @param func The used forecast method.
+#' @param ... More arguments specific to the used forecasting method.
+#'
+#' @examples \dontrun{tf_forecast(
+#'            train_data,        # used training dataset
+#'            n_pred = 6,        # number of predictions
+#'            func = auto.arima, # used forecasting method
+#'            parallel = TRUE    # for runiing in parallel
+#'          )}
+#'
+#' @return The forecasted values for the series
+
+tf_forecast <- function(data, n_pred, func, ...) {
+
+  #verify correct input data
+  check_input_data(data)
+
+  # get the name of the used function
+  name <- find_original_name(func)
+
+  # Forecasts with the prophet model:
+  if (name == "prophet") {
+
+    #TODO add test for forecasts_prophet
+    preds <- forecasts_prophet(data, n_pred,  ...)
+
+
+  } else {
+
+    # Forecasts from the forecast package
+
+    preds <- forecasts_timeseries(data, n_pred = n_pred, func = func, name = name)
+
+  }
+
+  return(preds)
+}
+
 #' Actually calls the forecast functions and applies sweep to the result.
 #'
 #' @param mod The pretrained model.
@@ -153,7 +171,8 @@ tf_mean_forecast <- function(data, n_pred) {
 #'
 #' @return The produced forecast. The date column has to be corrected.
 #'
-#' @examples
+#' @examples \dontrun{create_forecasts(sales_data, auto.arima, 6)}
+#'
 create_forecast <- function(data, mod, n_pred) {
 
   #save the current iterate to a string
@@ -197,7 +216,7 @@ create_forecast <- function(data, mod, n_pred) {
 #'
 #' @return The vector with the dates of the forecast horizon
 #'
-#' @examples
+#' @examples \dontrun{create_forecasting_dates(sales_data, 6)}
 create_forecasting_dates <- function(data, n_pred) {
 
   data %>%
@@ -254,7 +273,7 @@ tf_create_model <- function(data, func, ...) {
 #'
 #' @return The produced forecasts
 #'
-#' @examples
+#' @examples \dontrun{forecasts_timeseries(sales_data, auto.arima, 6, "auto.arima")}
 forecasts_timeseries <- function(data, func, n_pred, name, ...) {
 
   # Create the model object
