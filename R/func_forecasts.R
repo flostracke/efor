@@ -2,7 +2,68 @@
 
 # -- external functions ----
 
+#' Creates forecast for a dateframe.
+#'
+#' The Dataframe has to have the columny date and y. Following methods are
+#' supported:
+#'
+#' \itemize{
+#'     \item {forecasts package: All methods from the forecast packages
+#'     (\url{https://CRAN.R-project.org/package=forecast}) should work}
+#'     \item {prophet: (\url{https://CRAN.R-project.org/package=prophet})}
+#'     \item {forecastHybrid: (\url{https://CRAN.R-project.org/package=forecastHybrid })}
+#'     \item {smooth package: (\url{https://CRAN.R-project.org/package=smooth})}
+#'}
+#'
+#'
+#' @param data The dataframe containing the timeseries.
+#' @param n_pred The forecast horizon.
+#' @param func The used forecast method.
+#' @param ... More arguments specific to the used forecasting method.
+#'
+#' @export
+#'
+#' @examples \dontrun{tf_forecast(
+#'            train_data,        # used training dataset
+#'            n_pred = 6,        # number of predictions
+#'            func = auto.arima, # used forecasting method
+#'            parallel = TRUE    # for runiing in parallel
+#'          )}
+#'
+#' @return The forecasted values for the series
 
+tf_forecast <- function(data, n_pred, func, ...) {
+
+  #verify correct input data
+  check_input_data(data)
+
+  #get the function name
+  function_name <- find_original_name(func)
+
+  # get the package name of the used function. Based on that we call
+  # the relevant forecasting function
+  name <- environmentName(environment(func))
+
+  # Forecasts with the prophet model:
+  if (name == "prophet") {
+
+    #TODO add test for forecasts_prophet
+    preds <- forecasts_prophet(data, n_pred,  ...)
+
+  }
+
+  # Forecasts from the forecast or smooth package
+  if(name %in% c("forecast", "smooth")) {
+
+    preds <- forecasts_timeseries(data, n_pred = n_pred, func = func, name = function_name, package = name)
+  }
+
+
+
+
+
+  return(preds)
+}
 
 #' Creates forecast for a dateframe with mutlitple timeseries separted by the
 #' iterate column.
@@ -110,70 +171,17 @@ tf_mean_forecast <- function(data, n_pred) {
 
 # -- internal functions ----
 
-#' Creates forecast for a dateframe.
-#'
-#' The Dataframe has to have the columny date and y. Following methods are
-#' supported:
-#'
-#' \itemize{
-#'     \item {forecasts package: All methods from the forecast packages
-#'     (\url{https://CRAN.R-project.org/package=forecast}) should work}
-#'     \item {prophet: (\url{https://CRAN.R-project.org/package=prophet})}
-#'     \item {forecastHybrid: (\url{https://CRAN.R-project.org/package=forecastHybrid })}
-#'     \item {smooth package: (\url{https://CRAN.R-project.org/package=smooth})}
-#'}
-#'
-#'
-#' @param data The dataframe containing the timeseries.
-#' @param n_pred The forecast horizon.
-#' @param func The used forecast method.
-#' @param ... More arguments specific to the used forecasting method.
-#'
-#' @examples \dontrun{tf_forecast(
-#'            train_data,        # used training dataset
-#'            n_pred = 6,        # number of predictions
-#'            func = auto.arima, # used forecasting method
-#'            parallel = TRUE    # for runiing in parallel
-#'          )}
-#'
-#' @return The forecasted values for the series
-
-tf_forecast <- function(data, n_pred, func, ...) {
-
-  #verify correct input data
-  check_input_data(data)
-
-  # get the name of the used function
-  name <- find_original_name(func)
-
-  # Forecasts with the prophet model:
-  if (name == "prophet") {
-
-    #TODO add test for forecasts_prophet
-    preds <- forecasts_prophet(data, n_pred,  ...)
-
-
-  } else {
-
-    # Forecasts from the forecast package
-
-    preds <- forecasts_timeseries(data, n_pred = n_pred, func = func, name = name)
-
-  }
-
-  return(preds)
-}
-
 #' Actually calls the forecast functions and applies sweep to the result.
 #'
 #' @param mod The pretrained model.
 #' @param n_pred The number of predictions
+#' @param package The package of the used forecast method. Can be forecast or smooth
 #'
 #' @return The produced forecast. The date column has to be corrected.
 #'
 #' @examples \dontrun{create_forecasts(sales_data, auto.arima, 6)}
 #'
-create_forecast <- function(data, mod, n_pred) {
+create_forecast <- function(data, mod, n_pred, package) {
 
   #save the current iterate to a string
   current_iterate <- unique(data$iterate)
@@ -181,33 +189,57 @@ create_forecast <- function(data, mod, n_pred) {
   # get a vector with the dates for which the forecasts should be created
   forecasted_dates <- create_forecasting_dates(data, n_pred)
 
-  forecast <-
-    # produce the forecats with the passed model object
-    forecast::forecast(mod, n_pred) %>%
-    # clean the forecasts for the final output
-    sweep::sw_sweep(fitted = FALSE, rename_index = "date") %>%
-    # filter out the history of the series
-    dplyr::filter(key == "forecast") %>%
-    # keep only specific interval information
-    dplyr::select(
-      date,
-      key,
-      y = value,
-      y_lo.95 = lo.95,
-      y_hi.95 = hi.95
-    ) %>%
-    #prevents hw from producing too many forecasts
-    head(n_pred) %>%
-    # replace the future dates with a nice representation and add the
-    # information for the current iterate
-    dplyr::mutate(
-      date = forecasted_dates,
-      iterate = current_iterate
-    )
+  if(package == "forecast") {
+    forecast <-
+      # produce the forecats with the passed model object
+      forecast::forecast(mod, n_pred) %>%
+      # clean the forecasts for the final output
+      sweep::sw_sweep(fitted = FALSE, rename_index = "date") %>%
+      # filter out the history of the series
+      dplyr::filter(key == "forecast") %>%
+      # keep only specific interval information
+      dplyr::select(
+        date,
+        key,
+        y = value,
+        y_lo.95 = lo.95,
+        y_hi.95 = hi.95
+      ) %>%
+      #prevents hw from producing too many forecasts
+      head(n_pred) %>%
+      # replace the future dates with a nice representation and add the
+      # information for the current iterate
+      dplyr::mutate(
+        date = forecasted_dates,
+        iterate = current_iterate
+      )
+  }
+
+  if(package == "smooth") {
+
+    forecast <- smooth::forecast(mod, n_pred) %>%
+      dplyr::as_tibble() %>%
+      rename(
+        y = `Point Forecast`,
+        y_lo.95 = `Lo 0.95`,
+        y_hi.95 = `Hi 0.95`
+      ) %>%
+      head(n_pred) %>%
+      dplyr::mutate(
+        date = forecasted_dates,
+        iterate = current_iterate
+      )
+
+
+  }
+
+
 
   # returns the dataframe with the forecasts for the current iterate
   return(forecast)
 }
+
+
 
 #' Creates a vector with the dates for which the forecasts should be created
 #'
@@ -251,11 +283,11 @@ tf_create_model <- function(data, func, ...) {
   # convert a single tsibble timeseries to a ts object for passing to the
   # methods from the forecast package
   ts_data <- data %>%
-   tsibble::as_tsibble(
-     key = id(iterate),
-     index = date
-   ) %>%
-   as.ts()
+    tsibble::as_tsibble(
+      key = id(iterate),
+      index = date
+    ) %>%
+    as.ts()
 
   # Construct the model object with additional parameters
   mod <- func(ts_data, ...)
@@ -264,17 +296,21 @@ tf_create_model <- function(data, func, ...) {
   return(mod)
 }
 
+
+
 #' Wrapper function for forecasts from the forecast package
 #'
 #' @param data The dataset with all the articles
 #' @param func The used forecast function
 #' @param n_pred Number of the produced forecasts
+#' @param package The package of the used forecast method. Can be forecast or smooth
 #' @param ... FUrther arguments which should be passed to the forecast function
 #'
 #' @return The produced forecasts
 #'
 #' @examples \dontrun{forecasts_timeseries(sales_data, auto.arima, 6, "auto.arima")}
-forecasts_timeseries <- function(data, func, n_pred, name, ...) {
+forecasts_timeseries <- function(data, func, n_pred, name, package,  ...) {
+
 
   # Create the model object
   mod <- tf_create_model(data, func, ...)
@@ -282,7 +318,7 @@ forecasts_timeseries <- function(data, func, n_pred, name, ...) {
 
   preds <-
     # create the forecasts with the trained model
-    create_forecast(data, mod, n_pred) %>%
+    create_forecast(data, mod, n_pred, package) %>%
     # add name of forecasting method
     dplyr::mutate(key = name) %>%
     #select columns for output with predictions intervals
