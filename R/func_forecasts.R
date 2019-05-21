@@ -215,7 +215,7 @@ create_forecast <- function(data, mod, n_pred, package) {
 
     forecast <- smooth::forecast(mod, n_pred) %>%
       dplyr::as_tibble() %>%
-      rename(
+      dplyr::rename(
         y = `Point Forecast`,
         y_lo.95 = `Lo 0.95`,
         y_hi.95 = `Hi 0.95`
