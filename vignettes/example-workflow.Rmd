@@ -1,22 +1,21 @@
 ---
-output: github_document
+title: "Example Workflow"
+author: "Florian Stracke"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
-
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
-[![Travis build status](https://travis-ci.org/flostracke/efor.svg?branch=master)](https://travis-ci.org/flostracke/efor)
-[![Coverage status](https://codecov.io/gh/flostracke/efor/branch/master/graph/badge.svg)](https://codecov.io/github/flostracke/efor?branch=master)
-[![lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
-
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>",
-  fig.path = "man/figures/README-",
-  out.width = "100%"
+  comment = "#>"
 )
 ```
+
 # efor
 
 The goal of EasyFORcasting or short efor is to make it easier if you have to forecast multiple timeseries.
@@ -33,7 +32,6 @@ You can install the released version of efor from github with:
 ``` r
 #devtools::install_github("flostracke/efor")
 ```
-
 ## Example
 
 ### Setup
@@ -42,12 +40,12 @@ First we load some packages for this example. The efor package contains some
 fictional timeseries data for demonstrating the apporaches:
 ```{r message=FALSE, warning=FALSE}
 
-library(tidyverse)
+library(dplyr)
 library(tsibble) # for creating nicer representation of monthly data
 library(efor)
 library(furrr) # for running the forecasting in parallel
 library(forecast) #provides forecast mehotds
-library(prophet) # provides forecast mehod
+library(ggplot2)
 
 
 sales_data <- sales_monthly %>% 
@@ -116,19 +114,17 @@ forecasts_ar <- tf_grouped_forecasts(
 forecasts_ar
 ```
 
-With the same syntax you can create forecasts utilizing the prophet package:
-Please note that there we disable the parallel function for prophet, because there 
-is some bug right now.
+
 
 ```{r message=FALSE, warning=FALSE}
-forecasts_prophet <- tf_grouped_forecasts(
+forecasts_ets <- tf_grouped_forecasts(
   train_data,      # used training dataset
   n_pred = 6,      # number of predictions
-  func = prophet,  # used forecasting method
+  func = ets,  # used forecasting method
   parallel = FALSE #disabling parallel for prohet
 )
 
-forecasts_prophet
+forecasts_ets
 ```
 
 ### Evaluation
@@ -137,15 +133,14 @@ In order to create some plots and evaluate the performance we combine the foreca
 into one dataset.
 
 ```{r}
-forecasts <- bind_rows(forecasts_ar, forecasts_prophet) %>% 
+forecasts <- bind_rows(forecasts_ar, forecasts_ets) %>% 
   mutate(date = yearmonth(date)) #reformat the date because of a bug in bind_rows
 ```
 
 The package brings also a function which makes it quite easy to access the performance (right now thhe mae, rmse and rsquared is calculated) of all the forecasting methods in the passed prediction dataframe:
 
 ```{r}
-tf_calc_metrics(forecasts, test_data) %>% 
-  spread(metric, value)
+tf_calc_metrics(forecasts, test_data) 
 ```
 
 Also it is possible to access the performance of each article:
@@ -176,10 +171,3 @@ bind_rows(train_data_plot, test_data_plot) %>%
   theme_minimal()
 
 ```
-
-
- 
- 
-
-
-

@@ -2,43 +2,10 @@
 
 # -- external functions ----
 
-#' Creates forecast for a dateframe.
-#'
-#' The Dataframe has to have the columny date and y. Following methods are
-#' supported:
-#'
-#' \itemize{
-#'     \item {forecasts package: All methods from the forecast packages
-#'     (\url{https://CRAN.R-project.org/package=forecast}) should work}
-#'     \item {prophet: (\url{https://CRAN.R-project.org/package=prophet})}
-#'     \item {forecastHybrid: (\url{https://CRAN.R-project.org/package=forecastHybrid })}
-#'     \item {smooth package: (\url{https://CRAN.R-project.org/package=smooth})}
-#'}
-#'
-#'
-#' @param data The dataframe containing the timeseries.
-#' @param n_pred The forecast horizon.
-#' @param func The used forecast method.
-#' @param ... More arguments specific to the used forecasting method.
-#'
-#' @export
-#'
-#' @examples \dontrun{tf_forecast(
-#'            train_data,        # used training dataset
-#'            n_pred = 6,        # number of predictions
-#'            func = auto.arima, # used forecasting method
-#'            parallel = TRUE    # for runiing in parallel
-#'          )}
-#'
-#' @return The forecasted values for the series
 
-tf_forecast <- function(data, n_pred, func, ...) {
-
-  #verify correct input data
-  check_input_data(data)
 
   #get the function name
-  function_name <- find_original_name(func)
+  function_name <- find_original_name(func) {
 
   # get the package name of the used function. Based on that we call
   # the relevant forecasting function
@@ -64,6 +31,7 @@ tf_forecast <- function(data, n_pred, func, ...) {
 
   return(preds)
 }
+
 
 #' Creates forecast for a dateframe with mutlitple timeseries separted by the
 #' iterate column.
@@ -170,6 +138,60 @@ tf_mean_forecast <- function(data, n_pred) {
 
 
 # -- internal functions ----
+
+#' Creates forecast for a dateframe.
+#'
+#' The Dataframe has to have the columny date and y. Following methods are
+#' supported:
+#'
+#' \itemize{
+#'     \item {forecasts package: All methods from the forecast packages
+#'     (\url{https://CRAN.R-project.org/package=forecast}) should work}
+#'     \item {prophet: (\url{https://CRAN.R-project.org/package=prophet})}
+#'     \item {forecastHybrid: (\url{https://CRAN.R-project.org/package=forecastHybrid })}
+#'     \item {smooth package: (\url{https://CRAN.R-project.org/package=smooth})}
+#'}
+#'
+#'
+#' @param data The dataframe containing the timeseries.
+#' @param n_pred The forecast horizon.
+#' @param func The used forecast method.
+#' @param ... More arguments specific to the used forecasting method.
+#'
+#' @examples \dontrun{tf_forecast(
+#'            train_data,        # used training dataset
+#'            n_pred = 6,        # number of predictions
+#'            func = auto.arima, # used forecasting method
+#'            parallel = TRUE    # for runiing in parallel
+#'          )}
+#'
+#' @return The forecasted values for the series
+
+tf_forecast <- function(data, n_pred, func, ...) {
+
+  #verify correct input data
+  check_input_data(data)
+
+  # get the name of the used function
+  name <- find_original_name(func)
+
+  # Forecasts with the prophet model:
+  if (name == "prophet") {
+
+    #TODO add test for forecasts_prophet
+    preds <- forecasts_prophet(data, n_pred,  ...)
+
+
+  } else {
+
+    # Forecasts from the forecast package
+
+    preds <- forecasts_timeseries(data, n_pred = n_pred, func = func, name = name)
+
+  }
+
+  return(preds)
+}
 
 #' Actually calls the forecast functions and applies sweep to the result.
 #'

@@ -1,44 +1,48 @@
 Package: efor
-Title: efor: Easy Forecasts, a package for helping creating forecasts
-Version: 0.0.0.9000
+Title: efor: EasyFORcasting, a package assisting forecasting
+    multiple timeseries
+Version: 0.0.1.0000
 Authors@R: 
     person(given = "Florian",
            family = "Stracke",
            role = c("aut", "cre"),
            email = "flostracke@gmail.com")
-Description: The package efor provides a set of functions which help to work with multiple
-    timeseries. The package is providing a set of functions for 
-    applying different preprocess and transformations methods to multiple
-    timeseries saved in a dataframe. Furthermore it helps modelling and evaluating
-    the resulting models.
+Description: The package efor provides a set of functions
+    which help to work with multiple timeseries. The focus is on creating
+    forecasts with timeseries techniques and evaluating the
+    forecasts.
 License: GPL-3
-Encoding: UTF-8
-LazyData: true
-RoxygenNote: 6.1.1
-Imports:
-    dplyr,
-    forecast,
-    purrr,
-    tibble,
-    magrittr,
-    rlang,
-    stringr,
-    furrr,
-    future,
-    lubridate,
-    sweep,
-    tidyr,
-    yardstick,
-    stats,
-    ggplot2,
-    forcats,
-    tsibble,
-    anomalize,
-    tibbletime
-Suggests:
-    testthat,
-    covr,
-    spelling
 URL: https://github.com/flostracke/efor
 BugReports: https://github.com/flostracke/efor/issues
+Imports:
+    anomalize,
+    dplyr,
+    forcats,
+    forecast,
+    furrr,
+    future,
+    ggplot2,
+    lubridate,
+    magrittr,
+    purrr,
+    rlang,
+    stats,
+    stringr,
+    sweep,
+    tibble,
+    tibbletime,
+    tidyr,
+    tsibble,
+    yardstick
+Suggests:
+    covr,
+    knitr,
+    rmarkdown,
+    spelling,
+    testthat
+VignetteBuilder: 
+    knitr
+Encoding: UTF-8
 Language: en-US
+LazyData: true
+RoxygenNote: 6.1.1
