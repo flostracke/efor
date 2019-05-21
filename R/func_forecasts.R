@@ -58,10 +58,6 @@ tf_forecast <- function(data, n_pred, func, ...) {
     preds <- forecasts_timeseries(data, n_pred = n_pred, func = func, name = function_name, package = packagename)
   }
 
-
-
-
-
   return(preds)
 }
 
