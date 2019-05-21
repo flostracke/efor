@@ -17,7 +17,7 @@
 forecasts_prophet <- function(data, n_pred, freq, ...) {
 
   #create the future values for the final result dataframe
-  future_dates <- tibble(ds = create_forecasting_dates(data, n_pred))
+  future_dates <- tibble::tibble(ds = create_forecasting_dates(data, n_pred))
 
   #save the current iterate
   current_iterate <- unique(data$iterate)
