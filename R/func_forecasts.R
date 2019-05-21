@@ -45,7 +45,7 @@ tf_forecast <- function(data, n_pred, func, ...) {
   packagename <- environmentName(environment(func))
 
   # Forecasts with the prophet model:
-  if (name == "prophet") {
+  if (packagename == "prophet") {
 
     #TODO add test for forecasts_prophet
     preds <- forecasts_prophet(data, n_pred,  ...)
@@ -53,7 +53,7 @@ tf_forecast <- function(data, n_pred, func, ...) {
   }
 
   # Forecasts from the forecast or smooth package
-  if(name %in% c("forecast", "smooth")) {
+  if(packagename %in% c("forecast", "smooth")) {
 
     preds <- forecasts_timeseries(data, n_pred = n_pred, func = func, name = function_name, package = packagename)
   }
