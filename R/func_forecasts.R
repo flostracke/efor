@@ -42,7 +42,7 @@ tf_forecast <- function(data, n_pred, func, ...) {
 
   # get the package name of the used function. Based on that we call
   # the relevant forecasting function
-  name <- environmentName(environment(func))
+  packagename <- environmentName(environment(func))
 
   # Forecasts with the prophet model:
   if (name == "prophet") {
@@ -55,7 +55,7 @@ tf_forecast <- function(data, n_pred, func, ...) {
   # Forecasts from the forecast or smooth package
   if(name %in% c("forecast", "smooth")) {
 
-    preds <- forecasts_timeseries(data, n_pred = n_pred, func = func, name = function_name, package = name)
+    preds <- forecasts_timeseries(data, n_pred = n_pred, func = func, name = function_name, package = packagename)
   }
 
 
@@ -232,8 +232,6 @@ create_forecast <- function(data, mod, n_pred, package) {
 
 
   }
-
-
 
   # returns the dataframe with the forecasts for the current iterate
   return(forecast)
