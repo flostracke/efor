@@ -4,7 +4,7 @@
 \alias{forecasts_timeseries}
 \title{Wrapper function for forecasts from the forecast package}
 \usage{
-forecasts_timeseries(data, func, n_pred, name, ...)
+forecasts_timeseries(data, func, n_pred, name, package, ...)
 }
 \arguments{
 \item{data}{The dataset with all the articles}
@@ -12,6 +12,8 @@ forecasts_timeseries(data, func, n_pred, name, ...)
 \item{func}{The used forecast function}
 
 \item{n_pred}{Number of the produced forecasts}
+
+\item{package}{The package of the used forecast method. Can be forecast or smooth}
 
 \item{...}{FUrther arguments which should be passed to the forecast function}
 }

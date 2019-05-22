@@ -4,12 +4,14 @@
 \alias{create_forecast}
 \title{Actually calls the forecast functions and applies sweep to the result.}
 \usage{
-create_forecast(data, mod, n_pred)
+create_forecast(data, mod, n_pred, package)
 }
 \arguments{
 \item{mod}{The pretrained model.}
 
 \item{n_pred}{The number of predictions}
+
+\item{package}{The package of the used forecast method. Can be forecast or smooth}
 }
 \value{
 The produced forecast. The date column has to be corrected.
