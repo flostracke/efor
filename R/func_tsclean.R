@@ -56,15 +56,18 @@ tf_clean_ts <- function(data, freq, ...) {
 #'
 #' @return Returns the cleaned dataframe
 #'
-tf_clean_grouped_ts <- function(data, parallel = T, freq = 12, ...) {
+tf_clean_grouped_ts <- function(data, parallel = T, ...) {
+
+  orig_date_vec <- data$date
 
   # create a plan for future execution
   create_plan(parallel)
 
   data %>%
     split(.$iterate) %>%
-    furrr::future_map(tf_clean_ts, .progress = T, freq, ...) %>%
-    dplyr::bind_rows()
+    furrr::future_map(tf_clean_ts, .progress = T, ...) %>%
+    dplyr::bind_rows() %>%
+    dplyr::mutate(date = orig_date_vec)
 
 }
 
