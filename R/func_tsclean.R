@@ -16,23 +16,31 @@
 #'
 tf_clean_ts <- function(data, freq, ...) {
 
-  #saves the current iterate
+  #preserver the original date vector
+  orig_date_vec <- data$date
+
+  #save the current iterate
   current_iterate <- unique(data$iterate)
 
-  data %>%
-    #cast to ts object
-    timetk::tk_ts(start = tf_start_date(., freq), frequency = freq, silent = T) %>%
+  #cast the data to a TS Object
+  ts_data <- data %>%
+    tsibble::as_tsibble(
+      key = id(iterate),
+      index = date
+    ) %>%
+    as.ts()
+
+  # Get the cleaned values
+  cleaned_y <- ts_data %>%
     forecast::tsclean(...) %>%
-    # make negative observations positive
-    abs() %>%
-    # cast to tibble
-    timetk::tk_tbl(rename_index = "date") %>%
-    # cast yearmon date column to normale date column
-    dplyr::mutate(date = tf_yearmon_to_date(date)) %>%
-    #add the current iterate information
-    dplyr::mutate(iterate = current_iterate) %>%
-    #arrange the columns
-    dplyr::select(date, iterate, y)
+    abs()
+
+  #create the final tibble object for returning
+  tibble(
+    date = orig_date_vec,
+    iterate = current_iterate,
+    y = cleaned_y
+  )
 }
 
 #'
