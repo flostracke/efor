@@ -25,7 +25,7 @@ tf_clean_ts <- function(data, freq, ...) {
   #cast the data to a TS Object
   ts_data <- data %>%
     tsibble::as_tsibble(
-      key = id(iterate),
+      key = iterate,
       index = date
     ) %>%
     as.ts()

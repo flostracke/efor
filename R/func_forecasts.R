@@ -148,7 +148,7 @@ tf_grouped_forecasts <- function(data, n_pred, func, parallel = TRUE, tsclean = 
 
   #add the original date colmntye
   if(tsclean == TRUE) {
-    forecasts <- dplyr::mutate(forecasts, date = bind_rows(orig_future_dates, orig_future_dates))
+    forecasts <- dplyr::mutate(forecasts, date = orig_future_dates %>% rep(2))
   } else {
     forecasts <- dplyr::mutate(forecasts, date = orig_future_dates)
   }
