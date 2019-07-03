@@ -139,7 +139,7 @@ tf_grouped_forecasts <- function(data, n_pred, func, parallel = TRUE, tsclean = 
       furrr::future_map(tf_forecast, n_pred, func, ...) %>%
       dplyr::bind_rows()
 
-    f(tsclean == TRUE) {
+    if(tsclean == TRUE) {
       forecasts_cleaned <- data %>%
         split(.$iterate) %>%
         purrr::map(tf_forecast, n_pred, func, ...) %>%

@@ -5,7 +5,8 @@
 \title{Creates forecast for a dateframe with mutlitple timeseries separted by the
 iterate column.}
 \usage{
-tf_grouped_forecasts(data, n_pred, func, parallel = TRUE, ...)
+tf_grouped_forecasts(data, n_pred, func, parallel = TRUE,
+  tsclean = FALSE, ...)
 }
 \arguments{
 \item{data}{The dataframe containing the timeseries.}
@@ -15,6 +16,8 @@ tf_grouped_forecasts(data, n_pred, func, parallel = TRUE, ...)
 \item{func}{The used forecast method.}
 
 \item{parallel}{Specifies if the forecasts are created in parallel.}
+
+\item{tsclean}{Specifies if a tsclean version of the model should be created}
 
 \item{...}{More arguments specific to the used forecasting method.}
 }
