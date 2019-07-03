@@ -118,7 +118,7 @@ tf_grouped_forecasts <- function(data, n_pred, func, parallel = TRUE, tsclean = 
       dplyr::bind_rows()
 
     if(tsclean == TRUE) {
-      forecasts_cleaned <- data %>%
+      forecasts_cleaned <- cleaned_data %>%
         split(.$iterate) %>%
         purrr::map(tf_forecast, n_pred, func, ...) %>%
         dplyr::bind_rows() %>%
@@ -136,7 +136,7 @@ tf_grouped_forecasts <- function(data, n_pred, func, parallel = TRUE, tsclean = 
       dplyr::bind_rows()
 
     if(tsclean == TRUE) {
-      forecasts_cleaned <- data %>%
+      forecasts_cleaned <- cleaned_data %>%
         split(.$iterate) %>%
         purrr::map(tf_forecast, n_pred, func, ...) %>%
         dplyr::bind_rows() %>%
