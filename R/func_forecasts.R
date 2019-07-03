@@ -127,10 +127,6 @@ tf_grouped_forecasts <- function(data, n_pred, func, parallel = TRUE, tsclean = 
       forecasts <- bind_rows(forecasts, forecasts_cleaned)
     }
 
-
-
-
-
   } else {
 
     #TODO Add Test for parallel path
@@ -152,7 +148,7 @@ tf_grouped_forecasts <- function(data, n_pred, func, parallel = TRUE, tsclean = 
 
   #add the original date colmntye
   if(tsclean == TRUE) {
-    forecasts <- dplyr::mutate(bind_rows(forecasts, forecasts), date = orig_future_dates)
+    forecasts <- dplyr::mutate(forecasts, date = bind_rows(orig_future_dates, orig_future_dates))
   } else {
     forecasts <- dplyr::mutate(forecasts, date = orig_future_dates)
   }
