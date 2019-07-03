@@ -84,6 +84,7 @@ tf_forecast <- function(data, n_pred, func, ...) {
 #' @param n_pred The forecast horizon.
 #' @param func The used forecast method.
 #' @param parallel Specifies if the forecasts are created in parallel.
+#' @param tsclean Specifies if a tsclean version of the model should be created
 #' @param ... More arguments specific to the used forecasting method.
 #'
 #'@examples \dontrun{tf_grouped_forecasts(
@@ -95,11 +96,15 @@ tf_forecast <- function(data, n_pred, func, ...) {
 #' @export
 #'
 #' @return The forecasted values for the dataset.
-tf_grouped_forecasts <- function(data, n_pred, func, parallel = TRUE, ...) {
+tf_grouped_forecasts <- function(data, n_pred, func, parallel = TRUE, tsclean = FALSE, ...) {
 
   #get a vector with the original date format. workaounrd for bug in
   #bind_rows, which looses the original date column data type
   orig_future_dates <- build_final_date_vector(data, n_pred)
+
+  if(tsclean == TRUE) {
+    cleaned_data <- tf_clean_grouped_ts(data, parallel)
+  }
 
   #create plan for multiprocessing
   create_plan()
@@ -112,6 +117,20 @@ tf_grouped_forecasts <- function(data, n_pred, func, parallel = TRUE, ...) {
       purrr::map(tf_forecast, n_pred, func, ...) %>%
       dplyr::bind_rows()
 
+    if(tsclean == TRUE) {
+      forecasts_cleaned <- data %>%
+        split(.$iterate) %>%
+        purrr::map(tf_forecast, n_pred, func, ...) %>%
+        dplyr::bind_rows() %>%
+        dplyr::mutate(key = stringr::str_c(key, "tsclean", sep = "_"))
+
+      forecasts <- bind_rows(forecasts, forecasts_cleaned)
+    }
+
+
+
+
+
   } else {
 
     #TODO Add Test for parallel path
@@ -119,6 +138,16 @@ tf_grouped_forecasts <- function(data, n_pred, func, parallel = TRUE, ...) {
       split(.$iterate) %>%
       furrr::future_map(tf_forecast, n_pred, func, ...) %>%
       dplyr::bind_rows()
+
+    f(tsclean == TRUE) {
+      forecasts_cleaned <- data %>%
+        split(.$iterate) %>%
+        purrr::map(tf_forecast, n_pred, func, ...) %>%
+        dplyr::bind_rows() %>%
+        dplyr::mutate(key = stringr::str_c(key, "tsclean", sep = "_"))
+
+      forecasts <- bind_rows(forecasts, forecasts_cleaned)
+    }
   }
 
   #add the original date colmntye
