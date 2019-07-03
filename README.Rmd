@@ -126,7 +126,8 @@ forecasts_prophet <- tf_grouped_forecasts(
   train_data,      # used training dataset
   n_pred = 6,      # number of predictions
   func = prophet,  # used forecasting method
-  parallel = FALSE #disabling parallel for prohet
+  parallel = FALSE, #disabling parallel for prohet
+  tsclean = TRUE
 )
 
 forecasts_prophet
