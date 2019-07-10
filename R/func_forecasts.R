@@ -96,67 +96,42 @@ tf_forecast <- function(data, n_pred, func, ...) {
 #' @export
 #'
 #' @return The forecasted values for the dataset.
-tf_grouped_forecasts <- function(data, n_pred, func, parallel = TRUE, tsclean = FALSE, ...) {
+tf_grouped_forecasts <-
+  function(data,
+           n_pred,
+           func,
+           parallel = TRUE,
+           ...) {
+    #get a vector with the original date format. workaounrd for bug in
+    #bind_rows, which looses the original date column data type
+    orig_future_dates <- build_final_date_vector(data, n_pred)
 
-  #get a vector with the original date format. workaounrd for bug in
-  #bind_rows, which looses the original date column data type
-  orig_future_dates <- build_final_date_vector(data, n_pred)
+    #create plan for multiprocessing
+    create_plan()
 
-  if(tsclean == TRUE) {
-    cleaned_data <- tf_clean_grouped_ts(data, parallel)
-  }
-
-  #create plan for multiprocessing
-  create_plan()
-
-  if(parallel == FALSE) {
-
-    # Prophet funktioniert nicht mit future map.. nur purr map nutzen!
-    forecasts <- data %>%
-      split(.$iterate) %>%
-      purrr::map(tf_forecast, n_pred, func, ...) %>%
-      dplyr::bind_rows()
-
-    if(tsclean == TRUE) {
-      forecasts_cleaned <- cleaned_data %>%
+    if (parallel == FALSE) {
+      # Prophet funktioniert nicht mit future map.. nur purr map nutzen!
+      forecasts <- data %>%
         split(.$iterate) %>%
         purrr::map(tf_forecast, n_pred, func, ...) %>%
-        dplyr::bind_rows() %>%
-        dplyr::mutate(key = stringr::str_c(key, "tsclean", sep = "_"))
-
-      forecasts <- bind_rows(forecasts, forecasts_cleaned)
+        dplyr::bind_rows()
     }
 
-  } else {
-
-    #TODO Add Test for parallel path
-    forecasts <- data %>%
-      split(.$iterate) %>%
-      furrr::future_map(tf_forecast, n_pred, func, ...) %>%
-      dplyr::bind_rows()
-
-    if(tsclean == TRUE) {
-      forecasts_cleaned <- cleaned_data %>%
+    else {
+      #TODO Add Test for parallel path
+      forecasts <- data %>%
         split(.$iterate) %>%
-        purrr::map(tf_forecast, n_pred, func, ...) %>%
-        dplyr::bind_rows() %>%
-        dplyr::mutate(key = stringr::str_c(key, "tsclean", sep = "_"))
-
-      forecasts <- bind_rows(forecasts, forecasts_cleaned)
+        furrr::future_map(tf_forecast, n_pred, func, ...) %>%
+        dplyr::bind_rows()
     }
-  }
 
-  #add the original date colmntye
-  if(tsclean == TRUE) {
-    forecasts <- dplyr::mutate(forecasts, date = orig_future_dates %>% rep(2))
-  } else {
+
+    #add the original date colmntye
     forecasts <- dplyr::mutate(forecasts, date = orig_future_dates)
+
+    return(forecasts)
+
   }
-
-
-  return(forecasts)
-
-}
 
 #' Returns a simple mean forecast for each iterate
 #'

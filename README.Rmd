@@ -110,8 +110,8 @@ forecasts_ar <- tf_grouped_forecasts(
   train_data,        # used training dataset
   n_pred = 6,        # number of predictions
   func = auto.arima, # used forecasting method
-  parallel = FALSE,   # for runiing in parallel
-  tsclean = TRUE
+  parallel = FALSE   # for runiing in parallel
+ 
 )
 
 forecasts_ar
@@ -126,8 +126,7 @@ forecasts_prophet <- tf_grouped_forecasts(
   train_data,      # used training dataset
   n_pred = 6,      # number of predictions
   func = prophet,  # used forecasting method
-  parallel = FALSE, #disabling parallel for prohet
-  tsclean = TRUE
+  parallel = FALSE #disabling parallel for prohet
 )
 
 forecasts_prophet
